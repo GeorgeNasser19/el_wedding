@@ -10,4 +10,6 @@ class AppTheme {
       const TextStyle(fontSize: 12, color: Colors.black);
 
   static Color maincolor = const Color(0xff0F3975);
+
+  static Color scafoldColor = Colors.white;
 }

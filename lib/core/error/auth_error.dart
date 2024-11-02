@@ -1,45 +1,27 @@
-import 'package:equatable/equatable.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-abstract class Failure extends Equatable {
-  final String message;
+String mapFirebaseAuthExceptionMessage(FirebaseAuthException e) {
+  switch (e.code) {
+    // login hundle error
+    case "invalid-email":
+      return "the email address is badly formatted.";
+    case "user-not-found":
+      return "No user is found with this email";
+    case "wrong-password":
+      return "incorrect password";
+    case "network-reqest-failed":
+      return "Netowrk error . please cheak your connection";
 
-  const Failure(this.message);
-
-  @override
-  List<Object?> get props => [message];
-}
-
-// login errors
-class LoginFailure extends Failure {
-  const LoginFailure(super.message);
-}
-
-class InvalidEmailFailure extends LoginFailure {
-  const InvalidEmailFailure() : super("Invalid email address.");
-}
-
-class UserNotFoundFailure extends LoginFailure {
-  const UserNotFoundFailure() : super("User not found.");
-}
-
-class WrongPasswordFailure extends LoginFailure {
-  const WrongPasswordFailure() : super("Incorrect password.");
-}
-
-// register errors
-class RegisterFailure extends Failure {
-  const RegisterFailure(super.message);
-}
-
-class EmailAlreadyInUseFailure extends RegisterFailure {
-  const EmailAlreadyInUseFailure() : super("Email is already in use.");
-}
-
-class WeakPasswordFailure extends RegisterFailure {
-  const WeakPasswordFailure() : super("Password is too weak.");
-}
-
-class UnknownAuthFailure extends Failure {
-  const UnknownAuthFailure()
-      : super("An unknown authentication error occurred.");
+    // register hundle error
+    case "email-already-in-use":
+      return "The email address is already in use by another account.";
+    case "weak-password":
+      return "The password provided is too weak.";
+    case "operation-not-allowed":
+      return "Email/password accounts are not enabled. Please enable them in the Firebase console.";
+    case "invalid-credential":
+      return "Password or Email are invalid.";
+    default:
+      return "An unexpected error occurred. Please try again.";
+  }
 }

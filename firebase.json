@@ -1,0 +1,25 @@
+{
+    "flutter": {
+        "platforms": {
+            "android": {
+                "default": {
+                    "projectId": "el-wedding",
+                    "appId": "1:679056722256:android:2275f0d1fe74ae2af34455",
+                    "fileOutput": "android/app/google-services.json"
+                }
+            },
+            "dart": {
+                "lib/firebase_options.dart": {
+                    "projectId": "el-wedding",
+                    "configurations": {
+                        "android": "1:679056722256:android:2275f0d1fe74ae2af34455",
+                        "ios": "1:679056722256:ios:e5dc92bf5749a213f34455",
+                        "macos": "1:679056722256:ios:e5dc92bf5749a213f34455",
+                        "web": "1:679056722256:web:4e3c06e7a57b17ecf34455",
+                        "windows": "1:679056722256:web:8c30508d3e3dc5b3f34455"
+                    }
+                }
+            }
+        }
+    }
+}

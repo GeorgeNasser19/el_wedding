@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "679056722256",
+    "project_id": "el-wedding",
+    "storage_bucket": "el-wedding.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:679056722256:android:2275f0d1fe74ae2af34455",
+        "android_client_info": {
+          "package_name": "com.example.el_wedding"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "679056722256-v57p1uthutjcb53pfaek9or93pjl05hp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBqFU_eXgNoddBn2wsCJRk3gDiQcXvTq_I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "679056722256-v57p1uthutjcb53pfaek9or93pjl05hp.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "679056722256-11rmo4822shmh55bu5eni23kp1a34cku.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.elWedding"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

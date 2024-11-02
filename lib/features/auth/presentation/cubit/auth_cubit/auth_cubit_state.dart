@@ -1,40 +1,70 @@
 part of 'auth_cubit_cubit.dart';
 
-sealed class AuthCubitState extends Equatable {
-  const AuthCubitState();
+sealed class AuthState extends Equatable {
+  const AuthState();
 
   @override
   List<Object> get props => [];
 }
 
-final class LoginCubitInitial extends AuthCubitState {}
+final class AuthInit extends AuthState {}
 
-final class LoginCubitLoading extends AuthCubitState {}
+final class LoginLoading extends AuthState {}
 
-final class LoginCubitLoaded extends AuthCubitState {
-  final UserModel user;
+final class LoginLoaded extends AuthState {
+  final String gmail;
+  final String password;
 
-  const LoginCubitLoaded(this.user);
+  const LoginLoaded(this.gmail, this.password);
 }
 
-final class LoginCubitFauilar extends AuthCubitState {
+final class LoginFauilar extends AuthState {
   final String message;
 
-  const LoginCubitFauilar(this.message);
+  const LoginFauilar(this.message);
 }
 
-final class RegisterCubitInitial extends AuthCubitState {}
+final class RegisterLoading extends AuthState {}
 
-final class RegisterCubitLoading extends AuthCubitState {}
-
-final class RegisterCubitLoaded extends AuthCubitState {
+final class RegisterLoaded extends AuthState {
   final UserModel user;
 
-  const RegisterCubitLoaded(this.user);
+  const RegisterLoaded(this.user);
 }
 
-final class RegisterCubitFauilar extends AuthCubitState {
+final class RegisterFauilar extends AuthState {
   final String message;
 
-  const RegisterCubitFauilar(this.message);
+  const RegisterFauilar(this.message);
 }
+
+final class GoogleLoading extends AuthState {}
+
+final class GoogleNewUser extends AuthState {}
+
+final class GoogleLoaded extends AuthState {
+  final UserModel user;
+
+  const GoogleLoaded(this.user);
+}
+
+final class GoogleFauilar extends AuthState {
+  final String message;
+
+  const GoogleFauilar(this.message);
+}
+
+class ForgotPasswordLoading extends AuthState {}
+
+class ForgotPasswordEmailSentSuccess extends AuthState {
+  final String email;
+
+  const ForgotPasswordEmailSentSuccess(this.email);
+}
+
+class ForgotPasswordEmailSentFailure extends AuthState {
+  final String error;
+  const ForgotPasswordEmailSentFailure(this.error);
+}
+
+final class SignOut extends AuthState {}
