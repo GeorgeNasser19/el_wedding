@@ -7,23 +7,29 @@ import 'package:el_wedding/features/auth/domin/usecase/auth_repo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
+// This class implements authentication functionalities based on the AuthRepo contract
 class AuthRepoImp extends AuthRepo {
-  final FirebaseAuth firebaseAuth;
-  final FirebaseFirestore firestore;
+  final FirebaseAuth firebaseAuth; // FirebaseAuth instance for authentication
+  final FirebaseFirestore
+      firestore; // Firestore instance for database operations
 
   AuthRepoImp({required this.firebaseAuth, required this.firestore});
 
+  // Login function with email and password
   @override
   Future<Either<String, UserModel>> login(String email, String password) async {
     try {
+      // Attempt to sign in with email and password
       UserCredential userCredential = await firebaseAuth
           .signInWithEmailAndPassword(email: email, password: password);
 
+      // Retrieve user data from Firestore based on the user's unique ID
       DocumentSnapshot userDoc = await firestore
           .collection('users')
           .doc(userCredential.user?.uid)
           .get();
 
+      // Check if user document exists in Firestore
       if (userDoc.exists) {
         final userData = userDoc.data() as Map<String, dynamic>;
         return Right(UserModel(
@@ -34,21 +40,26 @@ class AuthRepoImp extends AuthRepo {
             password: userData["password"]));
       }
     } on FirebaseAuthException catch (e) {
-      return left(_mapFirebaseLoginExceptionMessage(e));
+      return left(
+          _mapFirebaseLoginExceptionMessage(e)); // Map specific error messages
     } catch (e) {
-      return left("please try again");
+      return left("please try again"); // Handle unexpected errors
     }
 
-    return const Left('User document does not exist');
+    return const Left(
+        'User document does not exist'); // Return if user doc is missing
   }
 
+  // Register function for creating new user with email, password, name, and role
   @override
   Future<Either<String, UserModel>> register(
       String name, String email, String password, String role) async {
     try {
+      // Create a new user with email and password
       UserCredential userCredential = await firebaseAuth
           .createUserWithEmailAndPassword(email: email, password: password);
 
+      // Store user data in Firestore
       await firestore.collection("users").doc(userCredential.user?.uid).set(
           {"name": name, "email": email, "role": role, "password": password});
 
@@ -60,12 +71,14 @@ class AuthRepoImp extends AuthRepo {
           password: password));
     } on FirebaseAuthException catch (e) {
       log(e.toString());
-      return left(_mapFirebaseRegisterExceptionMessage(e));
+      return left(_mapFirebaseRegisterExceptionMessage(
+          e)); // Map specific error messages
     } catch (e) {
-      return left("please try again");
+      return left("please try again"); // Handle unexpected errors
     }
   }
 
+  // Google sign-in function
   @override
   Future<Either<String, UserModel>> signWithGoogle() async {
     try {
@@ -94,32 +107,31 @@ class AuthRepoImp extends AuthRepo {
         return const Left("Failed to sign in with credentials.");
       }
 
-      // فحص ما إذا كان المستخدم موجودًا في Firestore
+      // Check if user exists in Firestore
       DocumentSnapshot userDoc = await firestore
           .collection('users')
           .doc(userCredential.user?.uid)
           .get();
 
       if (!userDoc.exists) {
-        // المستخدم جديد، قم بتخزين بياناته وتوجيهه لاختيار دوره
+        // New user, store initial data with role and password as null
         await firestore.collection("users").doc(userCredential.user?.uid).set({
           "name": googleUser.displayName,
           "email": googleUser.email,
           "role": null,
-          "password": null // لا نقوم بتحديد الدور بعد
+          "password": null
         });
 
-        // إرجاع حالة new_user
-        return const Left("new_user");
+        return const Left("new_user"); // Indicate new user status
       } else {
-        // التحقق من أن البيانات المسترجعة ليست null
+        // Existing user, retrieve data from Firestore
         final userData = userDoc.data() as Map<String, dynamic>?;
 
         if (userData == null || !userData.containsKey('role')) {
           return const Left("User data is invalid or missing.");
         }
 
-        // المستخدم موجود، استرجاع البيانات من Firestore
+        // Construct UserModel from Firestore data
         UserModel user = UserModel(
           id: userCredential.user!.uid,
           name: googleUser.displayName!,
@@ -128,8 +140,7 @@ class AuthRepoImp extends AuthRepo {
           password: userData["password"],
         );
 
-        // إرجاع حالة loaded
-        return Right(user);
+        return Right(user); // Indicate loaded status
       }
     } on FirebaseAuthException catch (e) {
       return Left(_mapFirebaseRegisterExceptionMessage(e));
@@ -138,24 +149,28 @@ class AuthRepoImp extends AuthRepo {
     }
   }
 
+  // Function to handle password reset
   @override
   Future<Either<String, void>> forgetPassword(String email) async {
     try {
       await firebaseAuth.sendPasswordResetEmail(email: email);
-      return const Right(null); // إرجاع نتيجة صحيحة دون بيانات
+      return const Right(null); // Successfully sent reset email
     } on FirebaseAuthException catch (e) {
-      return left(_mapFirebaseForgotPasswordExceptionMessage(e));
+      return left(_mapFirebaseForgotPasswordExceptionMessage(
+          e)); // Map specific error messages
     } catch (e) {
       return left("An unknown error occurred. Please try again.");
     }
   }
 
+  // Logout function
   @override
   Future<void> logout() async {
     return await firebaseAuth.signOut();
   }
 }
 
+// Helper function to map Firebase exceptions during login
 String _mapFirebaseLoginExceptionMessage(FirebaseAuthException e) {
   switch (e.code) {
     case "invalid-email":
@@ -171,6 +186,7 @@ String _mapFirebaseLoginExceptionMessage(FirebaseAuthException e) {
   }
 }
 
+// Helper function to map Firebase exceptions during registration
 String _mapFirebaseRegisterExceptionMessage(FirebaseAuthException e) {
   switch (e.code) {
     case "email-already-in-use":
@@ -198,6 +214,7 @@ String _mapFirebaseRegisterExceptionMessage(FirebaseAuthException e) {
   }
 }
 
+// Helper function to map Firebase exceptions during password reset
 String _mapFirebaseForgotPasswordExceptionMessage(FirebaseAuthException e) {
   switch (e.code) {
     case "invalid-email":

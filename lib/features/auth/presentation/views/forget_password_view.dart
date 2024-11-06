@@ -14,6 +14,8 @@ class ForgetPasswordView extends StatefulWidget {
 
 final emailController = TextEditingController();
 
+final _formKey = GlobalKey<FormState>();
+
 class _ForgetPasswordViewState extends State<ForgetPasswordView> {
   @override
   Widget build(BuildContext context) {
@@ -24,7 +26,7 @@ class _ForgetPasswordViewState extends State<ForgetPasswordView> {
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text("Sent Success.!")),
             );
-            context.go("/");
+            context.go("/LoginView");
           }
           if (state is ForgotPasswordEmailSentFailure) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -33,47 +35,52 @@ class _ForgetPasswordViewState extends State<ForgetPasswordView> {
           }
         },
         builder: (context, state) {
-          return Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Text(
-                'Enter Your Email',
-                style: AppTheme.largeText.copyWith(fontSize: 30),
-              ),
-              const SizedBox(
-                height: 20,
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: TextFieldCustom(
-                    icon: const Icon(Icons.email),
-                    controller: emailController,
-                    hintText: "Conttext@example.com",
-                    border: const OutlineInputBorder(),
-                    obscureText: false,
-                    validator: validateEmail),
-              ),
-              TextButton(
-                onPressed: () {
-                  context
-                      .read<AuthCubitCubit>()
-                      .forgetPassword(emailController.text);
-                },
-                child: state is ForgotPasswordLoading
-                    ? const CircularProgressIndicator()
-                    : const Text('Forgot Password'),
-              ),
-              const SizedBox(height: 16),
-              const Text('Don\'t have an account?'),
-              TextButton(
+          return Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                Text(
+                  'Enter Your Email',
+                  style: AppTheme.largeText.copyWith(fontSize: 30),
+                ),
+                const SizedBox(
+                  height: 20,
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextFieldCustom(
+                      icon: const Icon(Icons.email),
+                      controller: emailController,
+                      hintText: "Conttext@example.com",
+                      border: const OutlineInputBorder(),
+                      obscureText: false,
+                      validator: validateEmail),
+                ),
+                TextButton(
                   onPressed: () {
-                    context.go("/");
+                    if (_formKey.currentState!.validate()) {
+                      context
+                          .read<AuthCubitCubit>()
+                          .forgetPassword(emailController.text);
+                    }
                   },
-                  child: Text(
-                    "Sign Up",
-                    style: TextStyle(color: AppTheme.maincolor),
-                  )),
-            ],
+                  child: state is ForgotPasswordLoading
+                      ? const CircularProgressIndicator()
+                      : const Text('Forgot Password'),
+                ),
+                const SizedBox(height: 16),
+                const Text('Don\'t have an account?'),
+                TextButton(
+                    onPressed: () {
+                      context.go("/");
+                    },
+                    child: Text(
+                      "Sign Up",
+                      style: TextStyle(color: AppTheme.maincolor),
+                    )),
+              ],
+            ),
           );
         },
       ),

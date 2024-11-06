@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:el_wedding/check_auth.dart';
 import 'package:el_wedding/features/auth/data/auth_repo_imp.dart';
 import 'package:el_wedding/features/auth/domin/usecase/auth_repo_usecase.dart';
 import 'package:el_wedding/features/auth/presentation/cubit/auth_cubit/auth_cubit_cubit.dart';
@@ -16,6 +17,12 @@ class AppRouter {
     routes: <RouteBase>[
       GoRoute(
         path: '/',
+        builder: (context, state) {
+          return const CheckAuthPage();
+        },
+      ),
+      GoRoute(
+        path: '/RegisterView',
         builder: (context, state) {
           return const RegisterView();
         },

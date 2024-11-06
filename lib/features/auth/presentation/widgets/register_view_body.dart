@@ -16,35 +16,45 @@ class RegisterViewBody extends StatefulWidget {
 }
 
 class _RegisterViewBodyState extends State<RegisterViewBody> {
+  // Controllers for email , password and username input fields
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  // string field for role selected
   String? selectedRole;
+  // List of roles for dropdown menu
   final List<String> roles = ["User", "Photographer", "Makeup Artist"];
+  // boolean field for visibility
   bool isPasswordVisible = true;
+  // String field for text error message from unSelected role
   String? errorText;
+  // Form key for form validation
   final _formkey = GlobalKey<FormState>();
 
   @override
   void dispose() {
+    // Dispose controllers to free up memory
     nameController.dispose();
     emailController.dispose();
     passwordController.dispose();
     super.dispose();
   }
 
+  // Function to validate form and initiate registration
   void validateAndSubmit() {
     if (_formkey.currentState!.validate()) {
       if (selectedRole == null) {
+        // Display error if no role is selected
         setState(() {
           errorText = "Please select a role.";
         });
       } else {
         errorText = null;
+        // Call the register function from AuthCubit with user inputs
         context.read<AuthCubitCubit>().register(
-              nameController.text,
               emailController.text,
               passwordController.text,
+              nameController.text,
               selectedRole!,
             );
       }
@@ -56,15 +66,17 @@ class _RegisterViewBodyState extends State<RegisterViewBody> {
     return Center(
       child: BlocConsumer<AuthCubitCubit, AuthState>(
         listener: (context, state) {
+          // Navigate to login page if registration is successful
           if (state is RegisterLoaded) {
             context.go("/loginView");
           }
+          // Display error message if registration fails
           if (state is RegisterFauilar) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(state.message)),
             );
           }
-
+          // Navigate based on Google authentication states
           if (state is GoogleLoaded) {
             context.go("/loginView");
           }
@@ -92,23 +104,39 @@ class _RegisterViewBodyState extends State<RegisterViewBody> {
                 const SizedBox(height: 5),
                 Column(
                   children: [
+                    // Input fields for name, email, and password
                     _buildTextField("Full Name", "Your Name Here",
                         nameController, validateName),
                     const SizedBox(height: 12),
                     _buildTextField("Email", "contact@gmail.com",
                         emailController, validateEmail),
                     const SizedBox(height: 12),
-                    _buildTextField("Password", "**********",
-                        passwordController, validatePassword,
+                    _buildTextField(
+                        icon: IconButton(
+                          // function for switch password icons and visibility
+                          onPressed: () {
+                            setState(() {
+                              isPasswordVisible = !isPasswordVisible;
+                            });
+                          },
+                          icon: isPasswordVisible
+                              ? const Icon(Icons.visibility)
+                              : const Icon(Icons.visibility_off),
+                        ),
+                        "Password",
+                        "**********",
+                        passwordController,
+                        validatePassword,
                         isPassword: true),
                   ],
                 ),
+                // Dropdown menu for selecting role
                 DropdownButton<String>(
                   value: selectedRole,
                   hint: const Text("Select Role"),
                   items: roles.map((String role) {
                     return DropdownMenuItem<String>(
-                      value: (role),
+                      value: role,
                       child: Text(role),
                     );
                   }).toList(),
@@ -127,6 +155,7 @@ class _RegisterViewBodyState extends State<RegisterViewBody> {
                       style: const TextStyle(color: Colors.red),
                     ),
                   ),
+                // Custom button for submitting registration form
                 ButtonCustom(
                   onpressed: validateAndSubmit,
                   bgColor: AppTheme.maincolor,
@@ -139,6 +168,7 @@ class _RegisterViewBodyState extends State<RegisterViewBody> {
                         ),
                 ),
                 const SizedBox(height: 26),
+                // Divider with text for alternative sign-up method
                 Row(
                   children: <Widget>[
                     const Expanded(
@@ -163,6 +193,7 @@ class _RegisterViewBodyState extends State<RegisterViewBody> {
                   ],
                 ),
                 const SizedBox(height: 32),
+                // Custom button for Google Sign-Up
                 ButtonCustom(
                     onpressed: context.read<AuthCubitCubit>().signInWithGoogle,
                     bgColor: Colors.white,
@@ -183,6 +214,7 @@ class _RegisterViewBodyState extends State<RegisterViewBody> {
                             ],
                           )),
                 const SizedBox(height: 10),
+                // Link to navigate to the login page
                 TextButton(
                   onPressed: () {
                     context.go('/loginView');
@@ -200,9 +232,10 @@ class _RegisterViewBodyState extends State<RegisterViewBody> {
     );
   }
 
+  // Helper function to create input fields with validation
   Widget _buildTextField(String label, String hint,
       TextEditingController controller, String? Function(String?) validator,
-      {bool isPassword = false}) {
+      {bool isPassword = false, Widget? icon}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -217,14 +250,15 @@ class _RegisterViewBodyState extends State<RegisterViewBody> {
           controller: controller,
           border: const OutlineInputBorder(),
           validator: validator,
-          obscureText: isPassword,
+          obscureText: isPassword ? isPasswordVisible : false,
+          icon: icon,
         ),
       ],
     );
   }
 }
 
-// دالة تحقق البريد الإلكتروني
+// Email validation function
 String? validateEmail(String? value) {
   if (value == null || value.isEmpty) {
     return 'Please enter your email';
@@ -236,7 +270,7 @@ String? validateEmail(String? value) {
   return null;
 }
 
-// دالة تحقق كلمة المرور
+// Password validation function
 String? validatePassword(String? value) {
   if (value == null || value.isEmpty) {
     return 'Please enter your password';
@@ -250,7 +284,7 @@ String? validatePassword(String? value) {
   return null;
 }
 
-// دالة تحقق الاسم
+// Name validation function
 String? validateName(String? value) {
   if (value == null || value.isEmpty) {
     return 'Please enter your name';

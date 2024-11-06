@@ -44,9 +44,15 @@ class AuthCubitCubit extends Cubit<AuthState> {
     );
   }
 
-  void logout() {
-    emit(SignOut());
-    authRepoUsecase.logout();
+  void logout() async {
+    emit(SignOutLoading());
+
+    try {
+      await authRepoUsecase.logout(); // نفذ تسجيل الخروج وانتظر النتيجة
+      emit(SignOutSuccess()); // حالة النجاح عند إتمام تسجيل الخروج
+    } catch (e) {
+      emit(SignOutFailure(e.toString())); // حالة الخطأ مع رسالة الخطأ
+    }
   }
 
   Future<void> signInWithGoogle() async {

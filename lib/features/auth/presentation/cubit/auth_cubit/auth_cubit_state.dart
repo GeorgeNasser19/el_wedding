@@ -67,4 +67,12 @@ class ForgotPasswordEmailSentFailure extends AuthState {
   const ForgotPasswordEmailSentFailure(this.error);
 }
 
-final class SignOut extends AuthState {}
+class SignOutLoading extends AuthState {}
+
+class SignOutSuccess extends AuthState {}
+
+class SignOutFailure extends AuthState {
+  final String error;
+
+  const SignOutFailure(this.error);
+}
