@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:el_wedding/check_auth.dart';
 import 'package:el_wedding/features/auth/data/auth_repo_imp.dart';
 import 'package:el_wedding/features/auth/domin/usecase/auth_repo_usecase.dart';
-import 'package:el_wedding/features/auth/presentation/cubit/auth_cubit/auth_cubit_cubit.dart';
+import 'package:el_wedding/features/auth/presentation/cubit/auth_cubit/auth_cubit.dart';
 import 'package:el_wedding/features/auth/presentation/views/forget_password_view.dart';
 import 'package:el_wedding/features/auth/presentation/views/login_view.dart';
 import 'package:el_wedding/features/auth/presentation/views/register_view.dart';
@@ -43,7 +43,7 @@ class AppRouter {
         path: '/forgotPasswordView',
         builder: (context, state) {
           return BlocProvider(
-            create: (context) => AuthCubitCubit(AuthRepoUsecase(AuthRepoImp(
+            create: (context) => AuthCubit(AuthRepoUsecase(AuthRepoImp(
                 firebaseAuth: FirebaseAuth.instance,
                 firestore: FirebaseFirestore.instance))),
             child: const ForgetPasswordView(),

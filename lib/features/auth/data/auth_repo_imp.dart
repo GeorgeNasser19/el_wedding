@@ -33,11 +33,11 @@ class AuthRepoImp extends AuthRepo {
       if (userDoc.exists) {
         final userData = userDoc.data() as Map<String, dynamic>;
         return Right(UserModel(
-            id: userCredential.user!.uid,
-            name: userData["name"],
-            email: email,
-            role: userData["role"],
-            password: userData["password"]));
+          id: userCredential.user!.uid,
+          name: userData["name"],
+          email: email,
+          role: userData["role"],
+        ));
       }
     } on FirebaseAuthException catch (e) {
       return left(
@@ -64,11 +64,11 @@ class AuthRepoImp extends AuthRepo {
           {"name": name, "email": email, "role": role, "password": password});
 
       return Right(UserModel(
-          id: userCredential.user!.uid,
-          name: name,
-          email: email,
-          role: role,
-          password: password));
+        id: userCredential.user!.uid,
+        name: name,
+        email: email,
+        role: role,
+      ));
     } on FirebaseAuthException catch (e) {
       log(e.toString());
       return left(_mapFirebaseRegisterExceptionMessage(
@@ -119,7 +119,6 @@ class AuthRepoImp extends AuthRepo {
           "name": googleUser.displayName,
           "email": googleUser.email,
           "role": null,
-          "password": null
         });
 
         return const Left("new_user"); // Indicate new user status
@@ -137,7 +136,6 @@ class AuthRepoImp extends AuthRepo {
           name: googleUser.displayName!,
           email: googleUser.email,
           role: (userData["role"]),
-          password: userData["password"],
         );
 
         return Right(user); // Indicate loaded status

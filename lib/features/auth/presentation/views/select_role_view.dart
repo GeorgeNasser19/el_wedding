@@ -1,4 +1,3 @@
-import 'package:el_wedding/core/widgets/text_field_custom.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -61,13 +60,6 @@ class _SelectRoleViewState extends State<SelectRoleView> {
                     },
                   )),
               const SizedBox(height: 20),
-              TextFieldCustom(
-                  controller: passwordController,
-                  hintText: "**********",
-                  border: const OutlineInputBorder(),
-                  obscureText: true,
-                  validator: validatePassword),
-              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _selectedRole != null ? validateAndSubmit : null,
                 child: const Text('Continue'),
@@ -83,11 +75,13 @@ class _SelectRoleViewState extends State<SelectRoleView> {
     if (_selectedRole != null) {
       try {
         final userId = FirebaseAuth.instance.currentUser!.uid;
-        await FirebaseFirestore.instance.collection('users').doc(userId).update(
-            {'role': _selectedRole, "password": passwordController.text});
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userId)
+            .update({'role': _selectedRole});
 
         // ignore: use_build_context_synchronously
-        context.go("/loginView");
+        context.go("/");
       } catch (e) {
         // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context).showSnackBar(
@@ -96,17 +90,4 @@ class _SelectRoleViewState extends State<SelectRoleView> {
       }
     }
   }
-}
-
-String? validatePassword(String? value) {
-  if (value == null || value.isEmpty) {
-    return 'Please enter your password';
-  }
-  if (value.length < 8) {
-    return 'Password must be at least 8 characters long';
-  }
-  if (!RegExp(r'(?=.*[A-Z])(?=.*[a-z])(?=.*\d)').hasMatch(value)) {
-    return 'Password must include uppercase, lowercase and a number';
-  }
-  return null;
 }

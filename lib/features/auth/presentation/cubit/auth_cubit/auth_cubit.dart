@@ -7,10 +7,10 @@ import 'package:el_wedding/features/auth/data/model/user_model.dart';
 import 'package:el_wedding/features/auth/domin/usecase/auth_repo_usecase.dart';
 import 'package:equatable/equatable.dart';
 
-part 'auth_cubit_state.dart';
+part 'auth_state.dart';
 
-class AuthCubitCubit extends Cubit<AuthState> {
-  AuthCubitCubit(this.authRepoUsecase) : super(AuthInit());
+class AuthCubit extends Cubit<AuthState> {
+  AuthCubit(this.authRepoUsecase) : super(AuthInit());
 
   @override
   void onChange(change) {
@@ -56,19 +56,23 @@ class AuthCubitCubit extends Cubit<AuthState> {
   }
 
   Future<void> signInWithGoogle() async {
+    if (isClosed) return; // التأكد من أن Cubit لم يُغلق
     emit(GoogleLoading());
+
     final result = await authRepoUsecase.signWithGoogle();
 
+    if (isClosed) return; // التأكد مرة أخرى بعد انتظار الاستجابة
     result.fold(
       (error) {
+        if (isClosed) return; // التأكد من عدم الإغلاق قبل إرسال الحالة
         if (error == "new_user") {
-          emit(GoogleNewUser()); // حالة جديدة للمستخدم
+          emit(GoogleNewUser());
         } else {
-          emit(GoogleFauilar(error)); // أي خطأ آخر
+          emit(GoogleFauilar(error));
         }
       },
       (user) {
-        emit(GoogleLoaded(user)); // تسجيل الدخول ناجح
+        if (!isClosed) emit(GoogleLoaded(user)); // تحقق أخير من isClosed
       },
     );
   }

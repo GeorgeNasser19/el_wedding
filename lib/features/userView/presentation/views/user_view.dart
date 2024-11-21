@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:el_wedding/features/auth/data/auth_repo_imp.dart';
 import 'package:el_wedding/features/auth/domin/usecase/auth_repo_usecase.dart';
-import 'package:el_wedding/features/auth/presentation/cubit/auth_cubit/auth_cubit_cubit.dart';
+import 'package:el_wedding/features/auth/presentation/cubit/auth_cubit/auth_cubit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -13,7 +13,7 @@ class UserView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => AuthCubitCubit(AuthRepoUsecase(AuthRepoImp(
+      create: (context) => AuthCubit(AuthRepoUsecase(AuthRepoImp(
           firebaseAuth: FirebaseAuth.instance,
           firestore: FirebaseFirestore.instance))),
       child: Scaffold(
@@ -28,7 +28,7 @@ class UserView extends StatelessWidget {
               const SizedBox(
                 height: 30,
               ),
-              BlocConsumer<AuthCubitCubit, AuthState>(
+              BlocConsumer<AuthCubit, AuthState>(
                 listener: (context, state) {
                   if (state is SignOutSuccess) {
                     context.go("/LoginView");
@@ -42,7 +42,7 @@ class UserView extends StatelessWidget {
                 builder: (context, state) {
                   return ElevatedButton(
                       onPressed: () {
-                        context.read<AuthCubitCubit>().logout();
+                        context.read<AuthCubit>().logout();
                       },
                       child: state is SignOutLoading
                           ? const CircularProgressIndicator()

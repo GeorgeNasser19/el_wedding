@@ -1,6 +1,7 @@
 import 'package:el_wedding/core/theme.dart';
+import 'package:el_wedding/core/validation.dart';
 import 'package:el_wedding/core/widgets/text_field_custom.dart';
-import 'package:el_wedding/features/auth/presentation/cubit/auth_cubit/auth_cubit_cubit.dart';
+import 'package:el_wedding/features/auth/presentation/cubit/auth_cubit/auth_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -20,7 +21,7 @@ class _ForgetPasswordViewState extends State<ForgetPasswordView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: BlocConsumer<AuthCubitCubit, AuthState>(
+      body: BlocConsumer<AuthCubit, AuthState>(
         listener: (context, state) {
           if (state is ForgotPasswordEmailSentSuccess) {
             ScaffoldMessenger.of(context).showSnackBar(
@@ -52,16 +53,16 @@ class _ForgetPasswordViewState extends State<ForgetPasswordView> {
                   child: TextFieldCustom(
                       icon: const Icon(Icons.email),
                       controller: emailController,
-                      hintText: "Conttext@example.com",
+                      hintText: "Context@example.com",
                       border: const OutlineInputBorder(),
                       obscureText: false,
-                      validator: validateEmail),
+                      validator: ValidationApp.validateEmail),
                 ),
                 TextButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       context
-                          .read<AuthCubitCubit>()
+                          .read<AuthCubit>()
                           .forgetPassword(emailController.text);
                     }
                   },
@@ -73,7 +74,7 @@ class _ForgetPasswordViewState extends State<ForgetPasswordView> {
                 const Text('Don\'t have an account?'),
                 TextButton(
                     onPressed: () {
-                      context.go("/");
+                      context.go("/RegisterView");
                     },
                     child: Text(
                       "Sign Up",
@@ -86,15 +87,4 @@ class _ForgetPasswordViewState extends State<ForgetPasswordView> {
       ),
     );
   }
-}
-
-String? validateEmail(String? value) {
-  if (value == null || value.isEmpty) {
-    return 'Please enter your email';
-  }
-
-  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
-    return 'Please enter a valid email';
-  }
-  return null;
 }
