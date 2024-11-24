@@ -35,4 +35,12 @@ class ValidationApp {
     }
     return null;
   }
+
+  static String? validateProfileSetup(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your details';
+    }
+
+    return null;
+  }
 }

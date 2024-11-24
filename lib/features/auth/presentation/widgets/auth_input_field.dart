@@ -33,6 +33,7 @@ class AuthInputFields extends StatelessWidget {
           const SizedBox(height: 12),
           // Email input field
           buildTextField(
+            design: true,
             "Email",
             "contact@gmail.com",
             emailController,
@@ -41,6 +42,7 @@ class AuthInputFields extends StatelessWidget {
           const SizedBox(height: 12),
           // Password input field
           buildTextField(
+            design: true,
             isPasswordVisible: isPasswordVisible,
             icon: IconButton(
               onPressed: togglePasswordVisibility,

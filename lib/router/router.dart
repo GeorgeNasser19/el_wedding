@@ -6,7 +6,7 @@ import 'package:el_wedding/features/auth/presentation/cubit/auth_cubit/auth_cubi
 import 'package:el_wedding/features/auth/presentation/views/forget_password_view.dart';
 import 'package:el_wedding/features/auth/presentation/views/login_view.dart';
 import 'package:el_wedding/features/auth/presentation/views/register_view.dart';
-import 'package:el_wedding/features/auth/presentation/views/select_role_view.dart';
+import 'package:el_wedding/features/select_role/presentation/views/select_role_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

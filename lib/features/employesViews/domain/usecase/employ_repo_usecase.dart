@@ -12,7 +12,7 @@ class EmployRepoUsecase {
 
   Future<Either<String, EmployesModel>> saveData(
       EmployesModel emplyesModel) async {
-    return await employesRepo.saveData(emplyesModel);
+    return await employesRepo.setEmployeData(emplyesModel);
   }
 
   Future<Either<String, File>> pickImgae(File? image) async {

@@ -1,3 +1,5 @@
+import 'package:el_wedding/core/helpers/input_feild_with_text.dart';
+import 'package:el_wedding/core/validation.dart';
 import 'package:flutter/material.dart';
 
 class TextFeildsInEmpolyesView extends StatelessWidget {
@@ -14,32 +16,43 @@ class TextFeildsInEmpolyesView extends StatelessWidget {
   final TextEditingController description;
   final TextEditingController location;
   final TextEditingController pNumber;
+
   @override
   Widget build(BuildContext context) {
     return Column(
       children: [
-        TextFormField(
-          controller: fname,
-          // initialValue: userName,
-          decoration: const InputDecoration(labelText: 'Full Name'),
-        ),
+        buildTextField(
+            design: true,
+            "Full Name",
+            userName,
+            fname,
+            ValidationApp.validateProfileSetup),
         const SizedBox(height: 16),
-        TextFormField(
-          controller: location,
-          decoration: const InputDecoration(labelText: 'Location'),
-        ),
+        buildTextField(
+            design: true,
+            "Location",
+            "Sohag",
+            location,
+            ValidationApp.validateProfileSetup),
         const SizedBox(height: 16),
-        TextFormField(
-          controller: pNumber,
-          decoration: const InputDecoration(labelText: 'Phone Number'),
-          keyboardType: TextInputType.number,
-        ),
+        buildTextField(
+            design: true,
+            keyboardType: TextInputType.phone,
+            "Phone Number",
+            "+201000000000",
+            pNumber,
+            ValidationApp.validateProfileSetup),
         const SizedBox(height: 16),
-        TextFormField(
-          controller: description,
-          decoration: const InputDecoration(labelText: 'Description'),
-          maxLines: 3,
-        ),
+        buildTextField(
+            textInputAction: TextInputAction.newline,
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            design: true,
+            maxline: 5,
+            "Description",
+            "Write a brief description...",
+            description,
+            ValidationApp.validateProfileSetup),
       ],
     );
   }

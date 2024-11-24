@@ -2,11 +2,11 @@ enum UserRole { user, photographer, makeupArtist }
 
 UserRole? getUserRole(String role) {
   switch (role) {
-    case "User":
+    case "user":
       return UserRole.user;
-    case "Photographer":
+    case "photographer":
       return UserRole.photographer;
-    case "Makeup Artist":
+    case "makeupArtist":
       return UserRole.makeupArtist;
     default:
       return null;
@@ -31,7 +31,7 @@ class UserModel {
       'id': id,
       'name': name,
       'email': email,
-      'role': getUserRole(role) ?? "w",
+      'role': role,
     };
   }
 

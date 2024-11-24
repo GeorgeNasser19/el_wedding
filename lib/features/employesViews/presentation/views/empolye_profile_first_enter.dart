@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:el_wedding/core/scaffold_message.dart';
 import 'package:el_wedding/features/auth/presentation/widgets/divider_with_or_text.dart';
+import 'package:el_wedding/features/employesViews/presentation/widgets/button_add_services.dart';
+import 'package:el_wedding/features/employesViews/presentation/widgets/button_set_employe_data.dart';
 import 'package:el_wedding/features/employesViews/presentation/widgets/pick_image_in_empolye_view.dart';
 import 'package:el_wedding/features/employesViews/presentation/widgets/text_feilds_in_empolyes_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -10,81 +12,85 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../data/model/employes_model.dart';
 import '../employes_cubit/employes_cubit.dart';
+import '../widgets/services_input.dart';
 
+// This screen allows an employee to fill out their profile for the first time.
 class EmpolyeProfileFirstEnter extends StatefulWidget {
+  // Accepting the username as a parameter to show on the profile.
   final String userName;
 
   const EmpolyeProfileFirstEnter({super.key, required this.userName});
 
   @override
   // ignore: library_private_types_in_public_api
-  _MakeUpArtistView createState() => _MakeUpArtistView();
+  _EmpolyeProfileFirstEnter createState() => _EmpolyeProfileFirstEnter();
 }
 
-class _MakeUpArtistView extends State<EmpolyeProfileFirstEnter> {
+class _EmpolyeProfileFirstEnter extends State<EmpolyeProfileFirstEnter> {
+  // A global key to manage the state of the form.
   final _formKey = GlobalKey<FormState>();
 
+  // Controllers to handle the text input fields.
   final TextEditingController fname = TextEditingController();
   final TextEditingController description = TextEditingController();
   final TextEditingController location = TextEditingController();
   final TextEditingController pNumber = TextEditingController();
 
+  // A variable to hold the selected image.
   File? image;
+
+  // A list to manage services and their prices.
   List<Map<String, dynamic>> services = [
-    {'name': '', 'price': 0.0}
+    {'name': '', 'price': 0.0} // Initial empty service entry.
   ];
 
-  // الحصول على ID المستخدم الحالي
-  final String userId = FirebaseAuth.instance.currentUser!.uid;
+  // This method saves the employee's profile data to Firebase.
+  void saveData() {
+    // Getting the current user's ID from Firebase Authentication.
+    String userId = FirebaseAuth.instance.currentUser!.uid;
 
-  Widget buildServiceInput(int index) {
-    return Row(
-      children: [
-        Expanded(
-          child: TextField(
-            onChanged: (value) => services[index]['name'] = value,
-            decoration: const InputDecoration(labelText: 'Service Name'),
-          ),
-        ),
-        const SizedBox(width: 10),
-        Expanded(
-          child: TextField(
-            onChanged: (value) =>
-                services[index]['price'] = double.tryParse(value) ?? 0.0,
-            decoration: const InputDecoration(labelText: 'Price'),
-            keyboardType: TextInputType.number,
-          ),
-        ),
-        IconButton(
-          icon: const Icon(Icons.remove),
-          onPressed: () {
-            services.removeAt(index);
-            setState(() {});
-          },
-        ),
-      ],
-    );
+    // Checking if an image is selected before saving the data.
+    if (image == null) {
+      // Show a message if no image is selected.
+      ScaffoldMessageApp.snakeBar(context, "No Image Selected");
+    } else {
+      // Saving the data using the EmployesCubit.
+      context.read<EmployesCubit>().saveData(EmployesModel(
+            image: image!,
+            description: description.text,
+            fName: fname.text,
+            location: location.text,
+            pNumber:
+                int.tryParse(pNumber.text) ?? 0, // Default to 0 if invalid.
+            services: services,
+            id: userId,
+          ));
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        // Displaying the username in the app bar title.
         title: Text('Update Profile for ${widget.userName}'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
+          // Wrapping the form in a scroll view for smaller screens.
           child: Form(
-            key: _formKey,
+            key: _formKey, // Assigning the form key.
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                // Widget for selecting an image.
                 PickImageInEmployeeView(
                   onImagePicked: (image3) {
-                    image = image3;
+                    image = image3; // Updating the selected image.
                   },
                 ),
+                // Widget for input fields like name, description, etc.
                 TextFeildsInEmpolyesView(
                   userName: widget.userName,
                   fname: fname,
@@ -92,55 +98,35 @@ class _MakeUpArtistView extends State<EmpolyeProfileFirstEnter> {
                   location: location,
                   pNumber: pNumber,
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 16), // Adding space.
                 const Text(
                   'Services and Prices',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
-                Column(
-                  children: services.asMap().entries.map((entry) {
-                    int index = entry.key;
-                    return buildServiceInput(index);
-                  }).toList(),
-                ),
-                const SizedBox(height: 10),
-                ElevatedButton.icon(
-                  icon: const Icon(Icons.add),
-                  label: const Text('Add Service'),
-                  onPressed: () {
-                    services.add({'name': '', 'price': 0.0});
-                    setState(() {});
+                // Displaying a list of service inputs dynamically.
+                ListView.builder(
+                  shrinkWrap: true, // Ensures the list fits within the column.
+                  itemCount: services.length, // Number of services.
+                  itemBuilder: (context, index) {
+                    return buildServiceInput(index, services, () {
+                      setState(() {}); // Rebuild the UI when changes occur.
+                    });
                   },
                 ),
-                const SizedBox(height: 16),
+                const SizedBox(height: 10), // Adding space.
+                // Button to add more service input fields.
+                ButtonAddServices(
+                  services: services,
+                  onChange: () {
+                    setState(() {}); // Update the UI when services change.
+                  },
+                ),
+                const SizedBox(height: 16), // Adding space.
                 const DividerWithOrText(
-                  text: 'Or',
+                  text: 'Or', // Divider text.
                 ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    ElevatedButton(
-                        onPressed: () {
-                          if (image == null) {
-                            ScaffoldMessageApp.snakeBar(
-                                context, "No Image Selected");
-                          } else {
-                            context
-                                .read<EmployesCubit>()
-                                .saveData(EmployesModel(
-                                  image: image!,
-                                  description: description.text,
-                                  fName: fname.text,
-                                  location: location.text,
-                                  pNumber: int.tryParse(pNumber.text) ?? 0,
-                                  services: services,
-                                  id: userId, // استخدام userId هنا
-                                ));
-                          }
-                        },
-                        child: const Text('Save'))
-                  ],
-                ),
+                // Button to save the profile data.
+                ButtonSetEmployeeData(formKey: _formKey, saveData: saveData)
               ],
             ),
           ),

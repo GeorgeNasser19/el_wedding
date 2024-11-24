@@ -1,3 +1,4 @@
+import 'package:el_wedding/features/auth/data/model/user_model.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -16,13 +17,13 @@ class _SelectRoleViewState extends State<SelectRoleView> {
 
   final key = GlobalKey<FormState>();
 
-  String? _selectedRole;
-
-  final List<String> _roles = [
-    'Photographer',
-    'Makeup Artist',
-    'User',
+  final List<UserRole> getUserRole = [
+    UserRole.user,
+    UserRole.makeupArtist,
+    UserRole.photographer,
   ];
+
+  UserRole? _selectedRole;
 
   void validateAndSubmit() {
     if (key.currentState!.validate()) {
@@ -49,8 +50,8 @@ class _SelectRoleViewState extends State<SelectRoleView> {
                 style: TextStyle(fontSize: 20),
               ),
               const SizedBox(height: 20),
-              ..._roles.map((role) => RadioListTile<String>(
-                    title: Text(role),
+              ...getUserRole.map((role) => RadioListTile<UserRole>(
+                    title: Text(role.name),
                     value: role,
                     groupValue: _selectedRole,
                     onChanged: (value) {
@@ -78,15 +79,16 @@ class _SelectRoleViewState extends State<SelectRoleView> {
         await FirebaseFirestore.instance
             .collection('users')
             .doc(userId)
-            .update({'role': _selectedRole});
-
-        // ignore: use_build_context_synchronously
-        context.go("/");
+            .update({'role': _selectedRole!.name});
+        if (mounted) {
+          context.go("/");
+        }
       } catch (e) {
-        // ignore: use_build_context_synchronously
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error updating role: $e')),
-        );
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Error updating role: $e')),
+          );
+        }
       }
     }
   }

@@ -76,7 +76,9 @@ class _LoginViewContentState extends State<LoginViewContent> {
         ),
         const SizedBox(height: 32),
         // Google login button
-        const ButtonGoogle(),
+        const ButtonGoogle(
+          text: "Log in With Gmail",
+        ),
         const SizedBox(height: 10),
         // Sign-up prompt if user does not have an account
         const ButtonForSignUpView()

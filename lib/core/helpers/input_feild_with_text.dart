@@ -6,15 +6,18 @@ import '../widgets/text_custom.dart';
 import '../widgets/text_field_custom.dart';
 
 // Helper function to build text fields with custom settings
-Widget buildTextField(
-  String label,
-  String hint,
-  TextEditingController controller,
-  String? Function(String?) validator, {
-  bool isPassword = false,
-  Widget? icon,
-  bool isPasswordVisible = false,
-}) {
+Widget buildTextField(String label, String hint,
+    TextEditingController controller, String? Function(String?) validator,
+    {bool isPassword = false,
+    Widget? icon,
+    bool isPasswordVisible = false,
+    int? maxline,
+    int? maxlinehint,
+    bool? design,
+    EdgeInsetsGeometry? contentPadding,
+    TextInputAction? textInputAction,
+    TextAlign? textAlign,
+    TextInputType? keyboardType}) {
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -23,15 +26,31 @@ Widget buildTextField(
         style: AppTheme.largeText.copyWith(fontSize: 14),
         alignment: TextAlign.left,
       ),
-      TextFieldCustom(
-        icon: icon,
-        hintText: hint, // Hint text for the input field
-        style: AppTheme.meduimText,
-        controller: controller,
-        border: const OutlineInputBorder(),
-        validator: validator, // Field validation function
-        obscureText:
-            isPassword ? isPasswordVisible : false, // Show/hide password text
+      Container(
+        decoration: BoxDecoration(
+            shape: BoxShape.rectangle,
+            border: Border.all(
+              color: Colors.black,
+              width: 1.0,
+            )),
+        child: TextFieldCustom(
+          hintmaxline: maxlinehint,
+          keyboardType: keyboardType,
+          maxline: maxline,
+          icon: icon,
+          hintText: hint, // Hint text for the input field
+          style: AppTheme.meduimText,
+          controller: controller,
+
+          border: design!
+              ? const OutlineInputBorder()
+              : const UnderlineInputBorder(),
+          validator: validator, // Field validation function
+          obscureText:
+              isPassword ? isPasswordVisible : false, // Show/hide password text
+          contentPadding: contentPadding,
+          textInputAction: textInputAction,
+        ),
       ),
     ],
   );

@@ -8,7 +8,9 @@ import '../../../../core/widgets/button_custom.dart';
 import '../cubit/auth_cubit/auth_cubit.dart';
 
 class ButtonGoogle extends StatelessWidget {
-  const ButtonGoogle({super.key});
+  const ButtonGoogle({super.key, required this.text});
+
+  final String text;
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +44,7 @@ class ButtonGoogle extends StatelessWidget {
                       const SizedBox(
                         width: 8,
                       ),
-                      Text("Log in With Gmail", style: AppTheme.meduimText),
+                      Text(text, style: AppTheme.meduimText),
                     ],
                   ));
       },
