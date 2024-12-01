@@ -2,6 +2,7 @@ import 'package:el_wedding/core/scaffold_message.dart';
 import 'package:el_wedding/features/employesViews/presentation/employes_cubit/employes_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class ButtonSetEmployeeData extends StatelessWidget {
   final GlobalKey<FormState> formKey;
@@ -21,6 +22,7 @@ class ButtonSetEmployeeData extends StatelessWidget {
           ScaffoldMessageApp.snakeBar(context, state.errorMessage);
         } else if (state is SaveDataLoaded) {
           ScaffoldMessageApp.snakeBar(context, "Success!");
+          context.go("/EmpolyeEditProfile", extra: state.employesModel);
         }
       },
       builder: (context, state) {

@@ -1,53 +1,59 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:el_wedding/check_auth.dart';
-import 'package:el_wedding/features/auth/data/auth_repo_imp.dart';
-import 'package:el_wedding/features/auth/domin/usecase/auth_repo_usecase.dart';
-import 'package:el_wedding/features/auth/presentation/cubit/auth_cubit/auth_cubit.dart';
+import 'package:el_wedding/core/widgets/error_page.dart';
 import 'package:el_wedding/features/auth/presentation/views/forget_password_view.dart';
 import 'package:el_wedding/features/auth/presentation/views/login_view.dart';
 import 'package:el_wedding/features/auth/presentation/views/register_view.dart';
+import 'package:el_wedding/features/employesViews/data/model/employes_model.dart';
 import 'package:el_wedding/features/select_role/presentation/views/select_role_view.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'package:el_wedding/features/employesViews/presentation/views/empolye_profile_first_enter.dart';
 import 'package:go_router/go_router.dart';
+
+import '../features/employesViews/presentation/views/empolye_edit_profile.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
     routes: <RouteBase>[
-      GoRoute(
-        path: '/',
-        builder: (context, state) {
-          return const CheckAuthPage();
-        },
-      ),
+      // Route for the CheckAuthPage
+      GoRoute(path: '/', builder: (context, state) => const CheckAuthPage()),
+      // Route for RegisterView
       GoRoute(
         path: '/RegisterView',
-        builder: (context, state) {
-          return const RegisterView();
-        },
+        builder: (context, state) => const RegisterView(),
       ),
+      // Route for LoginView
       GoRoute(
         path: '/loginView',
-        builder: (context, state) {
-          return const LoginView();
-        },
+        builder: (context, state) => const LoginView(),
       ),
+      // Route for SelectRoleView
       GoRoute(
         path: '/selectRoleView',
+        builder: (context, state) => const SelectRoleView(),
+      ),
+      // Route for ForgetPasswordView
+      GoRoute(
+        path: '/forgotPasswordView',
+        builder: (context, state) => const ForgetPasswordView(),
+      ),
+      // Route for EmpolyeProfileFirstEnter with dynamic data
+      GoRoute(
+        path: '/EmpolyeProfileFirstEnter',
         builder: (context, state) {
-          return const SelectRoleView();
+          final extra = state.extra as String;
+          return EmpolyeProfileFirstEnter(userName: extra);
         },
       ),
       GoRoute(
-        path: '/forgotPasswordView',
+        path: '/EmpolyeEditProfile',
         builder: (context, state) {
-          return BlocProvider(
-            create: (context) => AuthCubit(AuthRepoUsecase(AuthRepoImp(
-                firebaseAuth: FirebaseAuth.instance,
-                firestore: FirebaseFirestore.instance))),
-            child: const ForgetPasswordView(),
-          );
+          final employesModel = state.extra as EmployesModel;
+          return EmpolyeEditProfile(employesModel: employesModel);
+        },
+      ),
+      GoRoute(
+        path: '/errorPage',
+        builder: (context, state) {
+          return const ErrorPage();
         },
       ),
     ],

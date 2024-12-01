@@ -30,7 +30,7 @@ class PickImageInEmployeeView extends StatelessWidget {
         if (state is PickedIamgeLoaded) {
           pickedImage = state.image;
           WidgetsBinding.instance.addPostFrameCallback((_) {
-            onImagePicked(pickedImage); // تأجيل التحديث بعد البناء
+            onImagePicked(pickedImage);
           });
         }
 

@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:el_wedding/core/scaffold_message.dart';
-import 'package:el_wedding/features/auth/presentation/widgets/divider_with_or_text.dart';
 import 'package:el_wedding/features/employesViews/presentation/widgets/button_add_services.dart';
 import 'package:el_wedding/features/employesViews/presentation/widgets/button_set_employe_data.dart';
+import 'package:el_wedding/features/employesViews/presentation/widgets/muilt_pick_pic.dart';
 import 'package:el_wedding/features/employesViews/presentation/widgets/pick_image_in_empolye_view.dart';
 import 'package:el_wedding/features/employesViews/presentation/widgets/text_feilds_in_empolyes_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -39,6 +39,9 @@ class _EmpolyeProfileFirstEnter extends State<EmpolyeProfileFirstEnter> {
   // A variable to hold the selected image.
   File? image;
 
+  // A variable to hold the selected List of images for gallary Profile.
+  List<String>? _selectedImages;
+
   // A list to manage services and their prices.
   List<Map<String, dynamic>> services = [
     {'name': '', 'price': 0.0} // Initial empty service entry.
@@ -52,7 +55,11 @@ class _EmpolyeProfileFirstEnter extends State<EmpolyeProfileFirstEnter> {
     // Checking if an image is selected before saving the data.
     if (image == null) {
       // Show a message if no image is selected.
-      ScaffoldMessageApp.snakeBar(context, "No Image Selected");
+      ScaffoldMessageApp.snakeBar(context, "No Image profile Selected");
+    }
+    if (_selectedImages == null) {
+      // Show a message if no image is selected.
+      ScaffoldMessageApp.snakeBar(context, "No Images Selected");
     } else {
       // Saving the data using the EmployesCubit.
       context.read<EmployesCubit>().saveData(EmployesModel(
@@ -63,7 +70,7 @@ class _EmpolyeProfileFirstEnter extends State<EmpolyeProfileFirstEnter> {
             pNumber:
                 int.tryParse(pNumber.text) ?? 0, // Default to 0 if invalid.
             services: services,
-            id: userId,
+            id: userId, images: _selectedImages!, imageUrl: image!.path,
           ));
     }
   }
@@ -104,13 +111,10 @@ class _EmpolyeProfileFirstEnter extends State<EmpolyeProfileFirstEnter> {
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                 ),
                 // Displaying a list of service inputs dynamically.
-                ListView.builder(
-                  shrinkWrap: true, // Ensures the list fits within the column.
-                  itemCount: services.length, // Number of services.
-                  itemBuilder: (context, index) {
-                    return buildServiceInput(index, services, () {
-                      setState(() {}); // Rebuild the UI when changes occur.
-                    });
+                ServicesInputWidget(
+                  services: services,
+                  onChange: () {
+                    setState(() {});
                   },
                 ),
                 const SizedBox(height: 10), // Adding space.
@@ -121,9 +125,11 @@ class _EmpolyeProfileFirstEnter extends State<EmpolyeProfileFirstEnter> {
                     setState(() {}); // Update the UI when services change.
                   },
                 ),
-                const SizedBox(height: 16), // Adding space.
-                const DividerWithOrText(
-                  text: 'Or', // Divider text.
+                // Adding space.
+                const SizedBox(height: 16),
+                // Widget to select multiple images.
+                MultiImagePickerWidget(
+                  onImagePicked: (p0) => _selectedImages = p0,
                 ),
                 // Button to save the profile data.
                 ButtonSetEmployeeData(formKey: _formKey, saveData: saveData)

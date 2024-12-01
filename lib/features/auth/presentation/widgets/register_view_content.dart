@@ -59,7 +59,7 @@ class _RegisterViewContentState extends State<RegisterViewContent> {
               emailController.text,
               passwordController.text,
               nameController.text,
-              selectedRole.toString(),
+              selectedRole!.name,
             );
       }
     }

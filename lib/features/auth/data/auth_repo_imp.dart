@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
+import 'package:el_wedding/core/error/error_handling.dart';
 import 'package:el_wedding/features/auth/data/model/user_model.dart';
 import 'package:el_wedding/features/auth/domin/usecase/auth_repo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -40,8 +41,8 @@ class AuthRepoImp extends AuthRepo {
         ));
       }
     } on FirebaseAuthException catch (e) {
-      return left(
-          _mapFirebaseLoginExceptionMessage(e)); // Map specific error messages
+      return left(ErrorHandling.mapFirebaseLoginExceptionMessage(
+          e)); // Map specific error messages
     } catch (e) {
       return left("please try again"); // Handle unexpected errors
     }
@@ -60,8 +61,12 @@ class AuthRepoImp extends AuthRepo {
           .createUserWithEmailAndPassword(email: email, password: password);
 
       // Store user data in Firestore
-      await firestore.collection("users").doc(userCredential.user?.uid).set(
-          {"name": name, "email": email, "role": role, "password": password});
+      await firestore.collection("users").doc(userCredential.user?.uid).set({
+        "name": name,
+        "email": email,
+        "role": role,
+        "isProfileComplete": false
+      });
 
       return Right(UserModel(
         id: userCredential.user!.uid,
@@ -71,7 +76,7 @@ class AuthRepoImp extends AuthRepo {
       ));
     } on FirebaseAuthException catch (e) {
       log(e.toString());
-      return left(_mapFirebaseRegisterExceptionMessage(
+      return left(ErrorHandling.mapFirebaseRegisterExceptionMessage(
           e)); // Map specific error messages
     } catch (e) {
       return left("please try again"); // Handle unexpected errors
@@ -119,6 +124,7 @@ class AuthRepoImp extends AuthRepo {
           "name": googleUser.displayName,
           "email": googleUser.email,
           "role": null,
+          "isProfileComplete": false
         });
 
         return const Left("new_user"); // Indicate new user status
@@ -141,7 +147,7 @@ class AuthRepoImp extends AuthRepo {
         return Right(user); // Indicate loaded status
       }
     } on FirebaseAuthException catch (e) {
-      return Left(_mapFirebaseRegisterExceptionMessage(e));
+      return Left(ErrorHandling.mapFirebaseRegisterExceptionMessage(e));
     } catch (e) {
       return const Left("An unknown error occurred. Please try again.");
     }
@@ -154,7 +160,7 @@ class AuthRepoImp extends AuthRepo {
       await firebaseAuth.sendPasswordResetEmail(email: email);
       return const Right(null); // Successfully sent reset email
     } on FirebaseAuthException catch (e) {
-      return left(_mapFirebaseForgotPasswordExceptionMessage(
+      return left(ErrorHandling.mapFirebaseForgotPasswordExceptionMessage(
           e)); // Map specific error messages
     } catch (e) {
       return left("An unknown error occurred. Please try again.");
@@ -165,61 +171,5 @@ class AuthRepoImp extends AuthRepo {
   @override
   Future<void> logout() async {
     return await firebaseAuth.signOut();
-  }
-}
-
-// Helper function to map Firebase exceptions during login
-String _mapFirebaseLoginExceptionMessage(FirebaseAuthException e) {
-  switch (e.code) {
-    case "invalid-email":
-      return "The email address is badly formatted.";
-    case "user-not-found":
-      return "No user is found with this email.";
-    case "wrong-password":
-      return "Incorrect password.";
-    case "network-request-failed":
-      return "Network error. Please check your connection.";
-    default:
-      return "An unexpected error occurred during login. Please try again.";
-  }
-}
-
-// Helper function to map Firebase exceptions during registration
-String _mapFirebaseRegisterExceptionMessage(FirebaseAuthException e) {
-  switch (e.code) {
-    case "email-already-in-use":
-      return "The email address is already in use by another account.";
-    case "weak-password":
-      return "The password provided is too weak.";
-    case "operation-not-allowed":
-      return "Email/password accounts are not enabled. Please enable them in the Firebase console.";
-    case "invalid-credential":
-      return "Password or Email are invalid.";
-    case "invalid-email":
-      return "The email address is badly formatted.";
-    case "too-many-requests":
-      return "Too many requests. Please try again later.";
-    case "credential-already-in-use":
-      return "This credential is already associated with a different user account.";
-    case "user-disabled":
-      return "This user account has been disabled by an administrator.";
-    case "invalid-verification-code":
-      return "The verification code entered is invalid.";
-    case "invalid-verification-id":
-      return "The verification ID is invalid or expired.";
-    default:
-      return "An unexpected error occurred during registration. Please try again.";
-  }
-}
-
-// Helper function to map Firebase exceptions during password reset
-String _mapFirebaseForgotPasswordExceptionMessage(FirebaseAuthException e) {
-  switch (e.code) {
-    case "invalid-email":
-      return "The email address is badly formatted.";
-    case "user-not-found":
-      return "No user is found with this email.";
-    default:
-      return "An unexpected error occurred during password reset. Please try again.";
   }
 }

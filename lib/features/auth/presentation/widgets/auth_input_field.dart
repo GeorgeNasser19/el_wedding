@@ -42,7 +42,7 @@ class AuthInputFields extends StatelessWidget {
           const SizedBox(height: 12),
           // Password input field
           buildTextField(
-            design: true,
+            maxline: 1,
             isPasswordVisible: isPasswordVisible,
             icon: IconButton(
               onPressed: togglePasswordVisibility,
@@ -50,6 +50,7 @@ class AuthInputFields extends StatelessWidget {
                   ? const Icon(Icons.visibility)
                   : const Icon(Icons.visibility_off),
             ),
+            design: true,
             "Password",
             "**********",
             passwordController,

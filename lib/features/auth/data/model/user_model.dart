@@ -3,11 +3,11 @@ enum UserRole { user, photographer, makeupArtist }
 UserRole? getUserRole(String role) {
   switch (role) {
     case "user":
-      return UserRole.user;
+      return "user" as UserRole;
     case "photographer":
-      return UserRole.photographer;
+      return "photographer" as UserRole;
     case "makeupArtist":
-      return UserRole.makeupArtist;
+      return "makeupArtist" as UserRole;
     default:
       return null;
   }
@@ -18,13 +18,24 @@ class UserModel {
   final String name;
   final String email;
   final String role;
+  final bool isProfileComplete;
 
-  UserModel({
-    required this.id,
-    required this.name,
-    required this.email,
-    required this.role,
-  });
+  UserModel(
+      {required this.id,
+      required this.name,
+      required this.email,
+      required this.role,
+      this.isProfileComplete = false});
+
+  factory UserModel.fromDoc(Map<String, dynamic> doc) {
+    return UserModel(
+      id: doc['id'] ?? "",
+      name: doc['name'] ?? "",
+      email: doc['email'] ?? "",
+      role: doc['role'] ?? "",
+      isProfileComplete: doc['isProfileComplete'] ?? "",
+    );
+  }
 
   Map<String, Object> toDoc() {
     return {
@@ -32,6 +43,7 @@ class UserModel {
       'name': name,
       'email': email,
       'role': role,
+      'isProfileComplete': isProfileComplete,
     };
   }
 

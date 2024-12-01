@@ -2,18 +2,19 @@ import 'dart:io';
 
 class EmployesModel {
   final String id;
-  final String? imageUrl; // رابط الصورة
+  final String imageUrl; // رابط الصورة
   final File? image; // ملف الصورة (للاستخدام المحلي فقط)
   final String fName;
   final String location;
   final int pNumber;
   final String description;
   final List<Map<String, dynamic>> services;
-
+  final List<String> images;
   EmployesModel({
+    required this.images,
     required this.id,
     this.image,
-    this.imageUrl,
+    required this.imageUrl,
     required this.fName,
     required this.location,
     required this.pNumber,
@@ -23,10 +24,11 @@ class EmployesModel {
 
   Map<String, Object> toDoc() {
     return {
-      'imageUrl': imageUrl ?? '',
+      'imageUrl': imageUrl,
       'fName': fName,
       'location': location,
       'pNumber': pNumber,
+      'images': images,
       'description': description,
       'services': services.map((service) {
         return {
@@ -37,15 +39,20 @@ class EmployesModel {
     };
   }
 
-  factory EmployesModel.fromDoc(Map<String, dynamic> doc) {
+  factory EmployesModel.fromDoc(Map<String, dynamic> data) {
+    // التأكد من التعامل مع الحقول بشكل مناسب
     return EmployesModel(
-      id: doc['id'],
-      imageUrl: doc['imageUrl'],
-      fName: doc['fName'],
-      location: doc['location'],
-      pNumber: doc['pNumber'],
-      description: doc['description'],
-      services: List<Map<String, dynamic>>.from(doc['services']),
+      fName: data['fName'] ?? '',
+      location: data['location'] ?? '',
+      pNumber: data['pNumber'] ?? '',
+      description: data['description'] ?? '',
+      services: (data['services'] as List<dynamic>?)
+              ?.map((e) => e as Map<String, dynamic>)
+              .toList() ??
+          [],
+      images: (data['images'] as List<dynamic>?)?.cast<String>() ?? [],
+      id: data['id'] ?? '',
+      imageUrl: data['imageUrl'] ?? '',
     );
   }
 }

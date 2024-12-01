@@ -34,3 +34,24 @@ Widget buildServiceInput(
     ],
   );
 }
+
+class ServicesInputWidget extends StatelessWidget {
+  const ServicesInputWidget(
+      {super.key, required this.services, required this.onChange});
+
+  final List<Map<String, dynamic>> services;
+  final VoidCallback onChange;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView.builder(
+      shrinkWrap: true, // Ensures the list fits within the column.
+      itemCount: services.length, // Number of services.
+      itemBuilder: (context, index) {
+        return buildServiceInput(index, services, () {
+          onChange();
+        });
+      },
+    );
+  }
+}
