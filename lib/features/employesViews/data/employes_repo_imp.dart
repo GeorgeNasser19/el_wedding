@@ -3,11 +3,9 @@ import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:el_wedding/features/employesViews/data/model/employes_model.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:image_picker/image_picker.dart';
 
-import '../../../core/error/error_handling.dart';
 import '../domain/employes_repo.dart';
 
 class EmployesRepoImp extends EmployesRepo {
@@ -42,81 +40,70 @@ class EmployesRepoImp extends EmployesRepo {
     try {
       String? imageUrl;
 
-      // 1. Upload profile image to Firebase Storage
+      // رفع صورة الملف الشخصي
       if (emplyesModel.image != null) {
         final storageRef =
             _storage.ref().child('users/${emplyesModel.id}/profile_image.jpg');
         final uploadTask = storageRef.putFile(emplyesModel.image!);
         final snapshot = await uploadTask;
-        imageUrl = await snapshot.ref.getDownloadURL(); // Get the download URL
+        imageUrl = await snapshot.ref.getDownloadURL();
       }
 
-      List<String> imageUrls = []; // List to store URLs of additional images
+      imageUrl ??= ''; // إذا لم توجد صورة شخصية، تعيين قيمة فارغة.
 
-      // 2. Upload additional images to Firebase Storage
-      for (var imageFile in emplyesModel.images) {
-        final storageRef = _storage.ref().child(
-            'users/${emplyesModel.id}/additional_images/${DateTime.now().millisecondsSinceEpoch}.jpg');
-        final uploadTask =
-            storageRef.putFile(File(imageFile)); // Upload image file
-        final snapshot = await uploadTask;
-        final imageUrl =
-            await snapshot.ref.getDownloadURL(); // Get download URL
-        imageUrls.add(imageUrl); // Add image URL to list
+      // رفع الصور الإضافية
+      List<String> imageUrls = [];
+      if (emplyesModel.images != null && emplyesModel.images!.isNotEmpty) {
+        for (var imageFile in emplyesModel.imageUrls) {
+          final storageRef = _storage.ref().child(
+              'users/${emplyesModel.id}/additional_images/${DateTime.now().millisecondsSinceEpoch}.jpg');
+          final uploadTask = storageRef.putFile(File(imageFile));
+          final snapshot = await uploadTask;
+          final url = await snapshot.ref.getDownloadURL();
+          imageUrls.add(url);
+        }
       }
 
-      // 3. Create an updated model with the new image URLs
+      // تحديث النموذج مع روابط الصور
       final updatedModel = EmployesModel(
+        imageUrls: imageUrls,
         id: emplyesModel.id,
-        imageUrl: imageUrl!,
-        image: emplyesModel.image,
+        imageUrl: imageUrl,
         fName: emplyesModel.fName,
         location: emplyesModel.location,
         pNumber: emplyesModel.pNumber,
         description: emplyesModel.description,
         services: emplyesModel.services,
-        images: emplyesModel.images,
       );
 
-      // 4. Update the employee data in Firestore
+      // تحديث البيانات في Firestore
       await _firestore
           .collection("users")
           .doc(updatedModel.id)
           .update(updatedModel.toDoc());
 
-      // 5. Set the profile completion status to true
+      // تحديث حالة الملف الشخصي
       await _firestore.collection("users").doc(updatedModel.id).update({
         'isProfileComplete': true,
       });
 
-      return Right(
-          updatedModel); // Return the updated model if everything is successful
-    } on FirebaseAuthException catch (e) {
-      return Left(ErrorHandling.mapsetDataError(
-          e)); // Handle FirebaseAuthException errors
+      return Right(updatedModel); // إرجاع النموذج المحدّث
     } catch (e) {
-      return Left(e.toString()); // Return any other errors that might occur
+      return Left(e.toString()); // معالجة الأخطاء
     }
   }
 
-  // Function to fetch employee data from Firestore
   @override
-  Future<Either<String, EmployesModel>> getEmployeData(String uid) async {
+  Future<Either<String, EmployesModel>> getEmployeData(String userId) async {
     try {
-      // Get employee document from Firestore using the user ID
-      DocumentSnapshot doc =
-          await _firestore.collection("users").doc(uid).get();
+      final doc = await _firestore.collection("users").doc(userId).get();
 
-      if (doc.exists && doc.data() != null) {
-        // If document exists and data is not null, map it to EmployesModel
-        return right(EmployesModel.fromDoc(doc.data() as Map<String, dynamic>));
-      } else {
-        return left(
-            "No employee data found for userId: $uid"); // Return error if no data found
+      if (doc.exists) {
+        return Right(EmployesModel.fromDoc(doc.data()!));
       }
     } catch (e) {
-      return left(
-          "Error fetching employee data: ${e.toString()}"); // Handle errors during data fetching
+      return Left(e.toString());
     }
+    return const Left("User not found");
   }
 }

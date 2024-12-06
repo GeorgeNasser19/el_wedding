@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/theme.dart';
+
 class ButtonAddServices extends StatelessWidget {
   const ButtonAddServices(
       {super.key, required this.services, required this.onChange});
@@ -9,9 +11,15 @@ class ButtonAddServices extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton.icon(
-      icon: const Icon(Icons.add),
-      label: const Text('Add Service'),
+    return TextButton.icon(
+      icon: Icon(
+        Icons.add,
+        color: AppTheme.maincolor,
+      ),
+      label: Text(
+        'Add Service',
+        style: TextStyle(color: AppTheme.maincolor),
+      ),
       onPressed: () {
         services.add({'name': '', 'price': 0.0});
         onChange();

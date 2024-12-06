@@ -26,21 +26,29 @@ class ButtonSetEmployeeData extends StatelessWidget {
         }
       },
       builder: (context, state) {
-        return Row(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: [
-            ElevatedButton(
-              onPressed: () {
-                if (formKey.currentState != null &&
-                    formKey.currentState!.validate()) {
-                  saveData();
-                }
-              },
-              child: state is SaveDataLoading
-                  ? const CircularProgressIndicator()
-                  : const Text('Save'),
-            ),
-          ],
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(6),
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            color: Colors.white,
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextButton(
+                onPressed: () {
+                  if (formKey.currentState != null &&
+                      formKey.currentState!.validate()) {
+                    saveData();
+                  }
+                },
+                child: state is SaveDataLoading
+                    ? const Center(child: CircularProgressIndicator())
+                    : const Text('Save', style: TextStyle(color: Colors.black)),
+              ),
+            ],
+          ),
         );
       },
     );

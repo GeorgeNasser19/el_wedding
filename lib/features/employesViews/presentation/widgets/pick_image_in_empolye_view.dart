@@ -34,27 +34,35 @@ class PickImageInEmployeeView extends StatelessWidget {
           });
         }
 
-        return Column(
-          children: [
-            const Text(
-              'Add your Picture',
-              style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
-            pickedImage != null
-                ? CircleAvatar(
-                    radius: 40,
-                    backgroundImage: FileImage(pickedImage!),
-                  )
-                : CircleAvatar(
-                    radius: 40,
-                    child: IconButton(
-                      onPressed: () {
-                        context.read<EmployesCubit>().pickIamge(pickedImage);
-                      },
-                      icon: const Icon(Icons.add),
+        return Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(16),
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            color: Colors.white,
+          ),
+          child: Column(
+            children: [
+              pickedImage != null
+                  ? CircleAvatar(
+                      radius: 40,
+                      backgroundImage: FileImage(pickedImage!),
+                    )
+                  : CircleAvatar(
+                      radius: 40,
+                      child: IconButton(
+                        onPressed: () {
+                          context.read<EmployesCubit>().pickIamge(pickedImage);
+                        },
+                        icon: const Icon(Icons.add),
+                      ),
                     ),
-                  ),
-          ],
+              const Text(
+                'Add your Picture',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
         );
       },
     );

@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:el_wedding/features/auth/data/model/user_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 import 'auth_repo.dart';
 
@@ -27,5 +28,13 @@ class AuthRepoUsecase {
 
   Future<Either<String, void>> forgetPassword(String email) async {
     return await authRepo.forgetPassword(email);
+  }
+
+  Future<String> getUserId() async {
+    return await authRepo.getUserId();
+  }
+
+  Stream<User?> changeState() {
+    return authRepo.changeState();
   }
 }

@@ -17,7 +17,7 @@ class UserModel {
   final String id;
   final String name;
   final String email;
-  final String role;
+  final String? role;
   final bool isProfileComplete;
 
   UserModel(
@@ -42,7 +42,7 @@ class UserModel {
       'id': id,
       'name': name,
       'email': email,
-      'role': role,
+      'role': role ?? "",
       'isProfileComplete': isProfileComplete,
     };
   }

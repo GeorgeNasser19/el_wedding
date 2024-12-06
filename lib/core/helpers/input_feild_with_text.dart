@@ -30,7 +30,7 @@ Widget buildTextField(String label, String hint,
         decoration: BoxDecoration(
             shape: BoxShape.rectangle,
             border: Border.all(
-              color: Colors.black,
+              color: const Color.fromARGB(255, 83, 83, 83),
               width: 1.0,
             )),
         child: TextFieldCustom(

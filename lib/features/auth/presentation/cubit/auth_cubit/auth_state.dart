@@ -76,3 +76,11 @@ class SignOutFailure extends AuthState {
 
   const SignOutFailure(this.error);
 }
+
+class GetUserId extends AuthState {
+  final String userId;
+
+  const GetUserId(this.userId);
+}
+
+class ChangeState extends AuthState {}

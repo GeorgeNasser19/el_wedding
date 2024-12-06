@@ -23,7 +23,7 @@ class DependancyInjection {
       ),
     );
 
-    // Use Case (Optional - إذا كنت تستخدمها)
+    // Use Case
     locator.registerLazySingleton<AuthRepoUsecase>(
       () => AuthRepoUsecase(locator<AuthRepoImp>()),
     );

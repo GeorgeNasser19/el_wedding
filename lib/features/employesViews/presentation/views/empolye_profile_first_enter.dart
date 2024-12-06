@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:el_wedding/core/scaffold_message.dart';
-import 'package:el_wedding/features/employesViews/presentation/widgets/button_add_services.dart';
 import 'package:el_wedding/features/employesViews/presentation/widgets/button_set_employe_data.dart';
 import 'package:el_wedding/features/employesViews/presentation/widgets/muilt_pick_pic.dart';
 import 'package:el_wedding/features/employesViews/presentation/widgets/pick_image_in_empolye_view.dart';
@@ -70,7 +69,8 @@ class _EmpolyeProfileFirstEnter extends State<EmpolyeProfileFirstEnter> {
             pNumber:
                 int.tryParse(pNumber.text) ?? 0, // Default to 0 if invalid.
             services: services,
-            id: userId, images: _selectedImages!, imageUrl: image!.path,
+            id: userId, images: _selectedImages!, imageUrls: _selectedImages!,
+            imageUrl: image!.path,
           ));
     }
   }
@@ -78,7 +78,9 @@ class _EmpolyeProfileFirstEnter extends State<EmpolyeProfileFirstEnter> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(255, 245, 241, 241),
       appBar: AppBar(
+        backgroundColor: Colors.white,
         // Displaying the username in the app bar title.
         title: Text('Update Profile for ${widget.userName}'),
       ),
@@ -97,6 +99,7 @@ class _EmpolyeProfileFirstEnter extends State<EmpolyeProfileFirstEnter> {
                     image = image3; // Updating the selected image.
                   },
                 ),
+                const SizedBox(height: 15),
                 // Widget for input fields like name, description, etc.
                 TextFeildsInEmpolyesView(
                   userName: widget.userName,
@@ -106,10 +109,7 @@ class _EmpolyeProfileFirstEnter extends State<EmpolyeProfileFirstEnter> {
                   pNumber: pNumber,
                 ),
                 const SizedBox(height: 16), // Adding space.
-                const Text(
-                  'Services and Prices',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                ),
+
                 // Displaying a list of service inputs dynamically.
                 ServicesInputWidget(
                   services: services,
@@ -117,20 +117,15 @@ class _EmpolyeProfileFirstEnter extends State<EmpolyeProfileFirstEnter> {
                     setState(() {});
                   },
                 ),
-                const SizedBox(height: 10), // Adding space.
-                // Button to add more service input fields.
-                ButtonAddServices(
-                  services: services,
-                  onChange: () {
-                    setState(() {}); // Update the UI when services change.
-                  },
-                ),
+
                 // Adding space.
                 const SizedBox(height: 16),
                 // Widget to select multiple images.
                 MultiImagePickerWidget(
                   onImagePicked: (p0) => _selectedImages = p0,
                 ),
+                const SizedBox(height: 16),
+
                 // Button to save the profile data.
                 ButtonSetEmployeeData(formKey: _formKey, saveData: saveData)
               ],

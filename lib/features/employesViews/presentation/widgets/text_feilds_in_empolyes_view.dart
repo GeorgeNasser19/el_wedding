@@ -19,41 +19,48 @@ class TextFeildsInEmpolyesView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        buildTextField(
-            design: true,
-            "Full Name",
-            userName,
-            fname,
-            ValidationApp.validateProfileSetup),
-        const SizedBox(height: 16),
-        buildTextField(
-            design: true,
-            "Location",
-            "Sohag",
-            location,
-            ValidationApp.validateProfileSetup),
-        const SizedBox(height: 16),
-        buildTextField(
-            design: true,
-            keyboardType: TextInputType.phone,
-            "Phone Number",
-            "+201000000000",
-            pNumber,
-            ValidationApp.validateProfileSetup),
-        const SizedBox(height: 16),
-        buildTextField(
-            textInputAction: TextInputAction.newline,
-            contentPadding:
-                const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            design: true,
-            maxline: 5,
-            "Description",
-            "Write a brief description...",
-            description,
-            ValidationApp.validateProfileSetup),
-      ],
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+        color: Colors.white,
+      ),
+      child: Column(
+        children: [
+          buildTextField(
+              design: true,
+              "Full Name",
+              userName,
+              fname,
+              ValidationApp.validateProfileSetup),
+          const SizedBox(height: 16),
+          buildTextField(
+              design: true,
+              "Location",
+              "Sohag",
+              location,
+              ValidationApp.validateProfileSetup),
+          const SizedBox(height: 16),
+          buildTextField(
+              design: true,
+              keyboardType: TextInputType.phone,
+              "Phone Number",
+              "+201000000000",
+              pNumber,
+              ValidationApp.validateProfileSetup),
+          const SizedBox(height: 16),
+          buildTextField(
+              textInputAction: TextInputAction.newline,
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+              design: true,
+              maxline: 5,
+              "Description",
+              "Write a brief description...",
+              description,
+              ValidationApp.validateProfileSetup),
+        ],
+      ),
     );
   }
 }

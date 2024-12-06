@@ -8,6 +8,5 @@ abstract class EmployesRepo {
   Future<Either<String, File>> pickImage(File? image);
   Future<Either<String, EmployesModel>> setEmployeData(
       EmployesModel emplyesModel);
-
-  Future<Either<String, EmployesModel>> getEmployeData(String uid);
+  Future<Either<String, EmployesModel>> getEmployeData(String userId);
 }

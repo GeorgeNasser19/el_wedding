@@ -83,11 +83,22 @@ class AuthCubit extends Cubit<AuthState> {
 
     result.fold(
       (error) {
-        emit(ForgotPasswordEmailSentFailure(error)); // حالة جديدة للمستخدم
+        emit(ForgotPasswordEmailSentFailure(error));
       },
       (_) {
-        emit(ForgotPasswordEmailSentSuccess(email)); // تسجيل الدخول ناجح
+        emit(ForgotPasswordEmailSentSuccess(email));
       },
     );
+  }
+
+  Future<void> getUserId() async {
+    final userID = await authRepoUsecase.getUserId();
+    emit(GetUserId(userID));
+  }
+
+  Future<void> changeState() async {
+    authRepoUsecase.changeState();
+
+    emit(ChangeState());
   }
 }

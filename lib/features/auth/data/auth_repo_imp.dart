@@ -172,4 +172,26 @@ class AuthRepoImp extends AuthRepo {
   Future<void> logout() async {
     return await firebaseAuth.signOut();
   }
+
+  @override
+  Future<String> getUserId() {
+    try {
+      final user = firebaseAuth.currentUser;
+
+      if (user != null) {
+        return Future.value(user.uid);
+      } else {
+        return Future.error("User is not logged in");
+      }
+    } catch (e) {
+      return Future.error("An error occurred while getting user ID: $e");
+    }
+  }
+
+  @override
+  Stream<User?> changeState() {
+    final user = firebaseAuth.authStateChanges();
+
+    return user;
+  }
 }

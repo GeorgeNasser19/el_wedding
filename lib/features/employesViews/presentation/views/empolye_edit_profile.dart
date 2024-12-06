@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:el_wedding/features/employesViews/data/model/employes_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,61 +19,100 @@ class EmpolyeEditProfile extends StatelessWidget {
       child: Scaffold(
         body: Column(
           children: [
-            // Image.network(employesModel.imageUrl!),
-            Text(employesModel.fName),
-            // استخدام ListView لعرض الـ name والـ price لكل خدمة
-            Expanded(
+            ClipOval(
+              child: CachedNetworkImage(
+                fadeInDuration: const Duration(milliseconds: 500),
+                fit: BoxFit.cover,
+                width: 200,
+                height: 200,
+                errorWidget: (context, url, error) => const Icon(Icons.error),
+                placeholder: (context, url) =>
+                    const CircularProgressIndicator(),
+                imageUrl: employesModel.imageUrl,
+              ),
+            ),
+            Text(
+              employesModel.fName,
+              style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(
+              height: 100,
               child: ListView.builder(
                 itemCount: employesModel.services.length,
                 itemBuilder: (context, index) {
-                  // استخراج الـ Map لكل خدمة
                   var service = employesModel.services[index];
+                  log(employesModel.imageUrls.length.toString());
 
-                  // استخراج الـ name و الـ price من الـ Map
-                  String name = service['name']; // القيمة التي تحمل اسم الخدمة
-                  var price = service['price']; // القيمة التي تحمل السعر
+                  String name = service['name'];
+                  var price = service['price'];
 
                   return ListTile(
                     title: Text(
-                      name, // عرض اسم الخدمة
-                      style:
-                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                      name,
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
                     ),
                     subtitle: Text(
-                      '\$ $price', // عرض السعر
-                      style: TextStyle(fontSize: 16),
+                      '\$ $price',
+                      style: const TextStyle(fontSize: 16),
                     ),
                   );
                 },
               ),
             ),
-            Image.network(employesModel.imageUrl),
-            // Expanded(
-            //   child: ListView.builder(
-            //     itemCount: employesModel.images.length,
-            //     itemBuilder: (context, index) {
-            //       String imagePath = employesModel.images[index];
+            Padding(
+              padding: const EdgeInsets.only(left: 15),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Column(
+                  children: [
+                    Text(
+                      employesModel.description,
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      employesModel.location,
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                    Text(
+                      employesModel.pNumber.toString(),
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Text("Beroooooooooooooooo"),
+            SizedBox(
+              height: 200,
+              child: ListView.builder(
+                itemCount: employesModel.imageUrls.length,
+                itemBuilder: (context, index) {
+                  String imagePath = employesModel.imageUrls[index];
+                  log(employesModel.imageUrls.length.toString());
 
-            //       return Container(
-            //         margin: EdgeInsets.symmetric(vertical: 5),
-            //         child: Row(
-            //           children: [
-            //             Container(
-            //               width: 50.0, // عرض الصورة
-            //               height: 50.0, // ارتفاع الصورة
-            //               child: Image.network(
-            //                 imagePath, // تحميل الصورة من الرابط
-            //                 fit: BoxFit.cover,
-            //               ),
-            //             ),
-            //             SizedBox(width: 10), // المسافة بين الصورة والنص
-            //             Text("Image $index"), // نص أو عنصر آخر
-            //           ],
-            //         ),
-            //       );
-            //     },
-            //   ),
-            // ),
+                  return Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Column(
+                      children: [
+                        Text("berooooooooooooooooooooo"),
+                        CachedNetworkImage(
+                          imageUrl: imagePath,
+                          width: 300,
+                          height: 300,
+                          fit: BoxFit.cover,
+                        ),
+                        const SizedBox(height: 5),
+                        Text("Image $index"),
+                      ],
+                    ),
+                  );
+                },
+              ),
+            ),
             BlocConsumer<AuthCubit, AuthState>(
               listener: (context, state) {
                 if (state is SignOutSuccess) {

@@ -65,11 +65,14 @@ class CheckAuthPage extends StatelessWidget {
               if (userSnapshot.connectionState == ConnectionState.done) {
                 final userData = userSnapshot.data;
                 log(userData.toString());
-                if (userData?.role == null) {
+                if (userData == null) {
+                  return const LoginView();
+                }
+                if (userData.role == null || userData.role == "") {
                   return const SelectRoleView();
                 }
 
-                if (!userData!.isProfileComplete) {
+                if (!userData.isProfileComplete) {
                   return EmpolyeProfileFirstEnter(userName: userData.name);
                 }
                 switch (userData.role) {
@@ -95,14 +98,16 @@ class CheckAuthPage extends StatelessWidget {
                               pNumber: emoployData.pNumber,
                               description: emoployData.description,
                               services: emoployData.services,
-                              images: emoployData.images,
+                              imageUrls: emoployData.images ?? [],
                               id: emoployData.id,
                               imageUrl: emoployData.imageUrl,
                             ),
                           );
                         }
-                        return const Center(
-                          child: CircularProgressIndicator(),
+                        return const Scaffold(
+                          body: Center(
+                            child: CircularProgressIndicator(),
+                          ),
                         );
                       },
                     );

@@ -2,6 +2,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../../core/theme.dart';
+
 class MultiImagePickerWidget extends StatefulWidget {
   final Function(List<String>?) onImagePicked; // تعديل لتأخذ List من الصور
 
@@ -25,11 +27,10 @@ class _MultiImagePickerWidgetState extends State<MultiImagePickerWidget> {
       if (images != null) {
         setState(() {
           _selectedImages = images;
+          List<String> imagePaths =
+              _selectedImages.map((file) => file.path).toList();
+          widget.onImagePicked(imagePaths);
         });
-        List<String> imagePaths =
-            _selectedImages.map((file) => file.path).toList();
-
-        widget.onImagePicked(imagePaths);
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -43,33 +44,53 @@ class _MultiImagePickerWidgetState extends State<MultiImagePickerWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ElevatedButton(
-          onPressed: _pickImages,
-          child: const Text('اختار الصور'),
-        ),
-        const SizedBox(height: 20),
-        _selectedImages.isEmpty
-            ? const Text('لم يتم اختيار أي صور بعد.')
-            : GridView.builder(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 3,
-                  crossAxisSpacing: 8,
-                  mainAxisSpacing: 8,
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: const BoxDecoration(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+        color: Colors.white,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Text(
+            "Galary",
+            style: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 20),
+          _selectedImages.isEmpty
+              ? const Text('No Selected Images yet')
+              : GridView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    crossAxisSpacing: 8,
+                    mainAxisSpacing: 8,
+                  ),
+                  itemCount: _selectedImages.length,
+                  itemBuilder: (context, index) {
+                    return Image.file(
+                      File(_selectedImages[index].path),
+                      fit: BoxFit.cover,
+                    );
+                  },
                 ),
-                itemCount: _selectedImages.length,
-                itemBuilder: (context, index) {
-                  return Image.file(
-                    File(_selectedImages[index].path),
-                    fit: BoxFit.cover,
-                  );
-                },
-              ),
-      ],
+          TextButton.icon(
+            icon: Icon(
+              Icons.add,
+              color: AppTheme.maincolor,
+            ),
+            onPressed: _pickImages,
+            label: Text('Pick Images',
+                style: TextStyle(color: AppTheme.maincolor)),
+          ),
+        ],
+      ),
     );
   }
 }
