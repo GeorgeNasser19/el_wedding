@@ -14,5 +14,5 @@ abstract class AuthRepo {
 
   Future<void> logout();
 
-  Future<String> getUserId();
+  Future<User?> getCurrentUser();
 }

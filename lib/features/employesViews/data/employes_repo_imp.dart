@@ -35,8 +35,8 @@ class EmployesRepoImp extends EmployesRepo {
 
   // Function to upload employee data along with their images to Firestore and Firebase Storage
   @override
-  Future<Either<String, EmployesModel>> setEmployeData(
-      EmployesModel emplyesModel) async {
+  Future<Either<String, EmployeeModel>> setEmployeData(
+      EmployeeModel emplyesModel) async {
     try {
       String? imageUrl;
 
@@ -65,7 +65,7 @@ class EmployesRepoImp extends EmployesRepo {
       }
 
       // تحديث النموذج مع روابط الصور
-      final updatedModel = EmployesModel(
+      final updatedModel = EmployeeModel(
         imageUrls: imageUrls,
         id: emplyesModel.id,
         imageUrl: imageUrl,
@@ -94,12 +94,12 @@ class EmployesRepoImp extends EmployesRepo {
   }
 
   @override
-  Future<Either<String, EmployesModel>> getEmployeData(String userId) async {
+  Future<Either<String, EmployeeModel>> getEmployeData(String userId) async {
     try {
       final doc = await _firestore.collection("users").doc(userId).get();
 
       if (doc.exists) {
-        return Right(EmployesModel.fromDoc(doc.data()!));
+        return Right(EmployeeModel.fromDoc(doc.data()!));
       }
     } catch (e) {
       return Left(e.toString());

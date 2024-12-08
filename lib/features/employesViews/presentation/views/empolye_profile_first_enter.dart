@@ -61,7 +61,7 @@ class _EmpolyeProfileFirstEnter extends State<EmpolyeProfileFirstEnter> {
       ScaffoldMessageApp.snakeBar(context, "No Images Selected");
     } else {
       // Saving the data using the EmployesCubit.
-      context.read<EmployesCubit>().saveData(EmployesModel(
+      context.read<EmployesCubit>().saveData(EmployeeModel(
             image: image!,
             description: description.text,
             fName: fname.text,

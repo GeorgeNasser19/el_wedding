@@ -77,10 +77,6 @@ class SignOutFailure extends AuthState {
   const SignOutFailure(this.error);
 }
 
-class GetUserId extends AuthState {
-  final String userId;
-
-  const GetUserId(this.userId);
-}
+class GetUserId extends AuthState {}
 
 class ChangeState extends AuthState {}

@@ -31,7 +31,7 @@ class CheckAuthPage extends StatelessWidget {
     return null;
   }
 
-  Future<EmployesModel?> fetchEmpolyModel(String userId) async {
+  Future<EmployeeModel?> fetchEmpolyModel(String userId) async {
     try {
       final doc = await FirebaseFirestore.instance
           .collection("users")
@@ -39,7 +39,7 @@ class CheckAuthPage extends StatelessWidget {
           .get();
 
       if (doc.exists) {
-        return EmployesModel.fromDoc(doc.data()!);
+        return EmployeeModel.fromDoc(doc.data()!);
       }
     } catch (e) {
       log("Error fetching user data employ: $e");
@@ -92,7 +92,7 @@ class CheckAuthPage extends StatelessWidget {
                             );
                           }
                           return EmpolyeEditProfile(
-                            employesModel: EmployesModel(
+                            employesModel: EmployeeModel(
                               fName: emoployData.fName,
                               location: emoployData.location,
                               pNumber: emoployData.pNumber,

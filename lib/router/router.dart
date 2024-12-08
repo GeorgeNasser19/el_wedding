@@ -46,7 +46,7 @@ class AppRouter {
       GoRoute(
         path: '/EmpolyeEditProfile',
         builder: (context, state) {
-          final employesModel = state.extra as EmployesModel;
+          final employesModel = state.extra as EmployeeModel;
           return EmpolyeEditProfile(employesModel: employesModel);
         },
       ),

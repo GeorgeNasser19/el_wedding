@@ -1,6 +1,6 @@
 import 'dart:io';
 
-class EmployesModel {
+class EmployeeModel {
   final String id;
   final String imageUrl;
   final File? image;
@@ -12,7 +12,7 @@ class EmployesModel {
   final List<String>? images; // الصور الإضافية
   final List<String> imageUrls; // روابط الصور
 
-  EmployesModel({
+  EmployeeModel({
     required this.imageUrls,
     required this.id,
     this.image,
@@ -43,8 +43,8 @@ class EmployesModel {
     };
   }
 
-  factory EmployesModel.fromDoc(Map<String, dynamic> data) {
-    return EmployesModel(
+  factory EmployeeModel.fromDoc(Map<String, dynamic> data) {
+    return EmployeeModel(
       fName: data['fName'] ?? '',
       location: data['location'] ?? '',
       pNumber: data['pNumber'] ?? 0,

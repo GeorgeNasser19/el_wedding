@@ -29,10 +29,19 @@ class EmployesCubit extends Cubit<EmployesState> {
         (image) => emit(PickedIamgeLoaded(image)));
   }
 
-  Future<void> saveData(EmployesModel emplyesModel) async {
+  Future<void> saveData(EmployeeModel emplyesModel) async {
     emit(SaveDataLoading());
 
     final result = await employRepoUsecase.saveData(emplyesModel);
+
+    result.fold((fail) => emit(SaveDataFailur(fail)),
+        (emplyesModel) => emit(SaveDataLoaded(emplyesModel)));
+  }
+
+  Future<void> fetchEmployeeModel(String userId) async {
+    emit(SaveDataLoading());
+
+    final result = await employRepoUsecase.fetchEmpoleeModel(userId);
 
     result.fold((fail) => emit(SaveDataFailur(fail)),
         (emplyesModel) => emit(SaveDataLoaded(emplyesModel)));

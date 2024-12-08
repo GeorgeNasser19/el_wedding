@@ -30,8 +30,8 @@ class AuthRepoUsecase {
     return await authRepo.forgetPassword(email);
   }
 
-  Future<String> getUserId() async {
-    return await authRepo.getUserId();
+  Future<User?> getUserId() async {
+    return await authRepo.getCurrentUser();
   }
 
   Stream<User?> changeState() {

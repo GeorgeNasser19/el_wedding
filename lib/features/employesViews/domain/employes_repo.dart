@@ -6,7 +6,7 @@ import '../data/model/employes_model.dart';
 
 abstract class EmployesRepo {
   Future<Either<String, File>> pickImage(File? image);
-  Future<Either<String, EmployesModel>> setEmployeData(
-      EmployesModel emplyesModel);
-  Future<Either<String, EmployesModel>> getEmployeData(String userId);
+  Future<Either<String, EmployeeModel>> setEmployeData(
+      EmployeeModel emplyesModel);
+  Future<Either<String, EmployeeModel>> getEmployeData(String userId);
 }

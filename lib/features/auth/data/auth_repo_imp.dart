@@ -174,18 +174,8 @@ class AuthRepoImp extends AuthRepo {
   }
 
   @override
-  Future<String> getUserId() {
-    try {
-      final user = firebaseAuth.currentUser;
-
-      if (user != null) {
-        return Future.value(user.uid);
-      } else {
-        return Future.error("User is not logged in");
-      }
-    } catch (e) {
-      return Future.error("An error occurred while getting user ID: $e");
-    }
+  Future<User?> getCurrentUser() async {
+    return firebaseAuth.currentUser;
   }
 
   @override

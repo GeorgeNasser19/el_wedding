@@ -12,7 +12,7 @@ final class EmployesInitial extends EmployesState {}
 final class SaveDataLoading extends EmployesState {}
 
 final class SaveDataLoaded extends EmployesState {
-  final EmployesModel employesModel;
+  final EmployeeModel employesModel;
 
   const SaveDataLoaded(this.employesModel);
 
@@ -45,6 +45,24 @@ final class PickedIamgeFailur extends EmployesState {
 
   const PickedIamgeFailur(this.errorMessage);
 
+  @override
+  List<Object> get props => [errorMessage];
+}
+
+final class EmployeeModelLoading extends EmployesState {}
+
+final class EmployeeModelLoaded extends EmployesState {
+  final EmployeeModel employeeModel;
+
+  const EmployeeModelLoaded(this.employeeModel);
+
+  @override
+  List<Object> get props => [employeeModel];
+}
+
+final class EmployeeModelFailur extends EmployesState {
+  final String errorMessage;
+  const EmployeeModelFailur(this.errorMessage);
   @override
   List<Object> get props => [errorMessage];
 }
