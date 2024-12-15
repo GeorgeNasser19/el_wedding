@@ -1,8 +1,11 @@
-import 'package:el_wedding/features/auth/data/model/user_model.dart';
+import 'package:el_wedding/features/auth/presentation/cubit/auth_cubit/auth_cubit.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+
+import '../../../../core/scaffold_message.dart';
+import '../../../../core/theme.dart';
+import '../../../auth/data/model/user_model.dart';
 
 class SelectRoleView extends StatefulWidget {
   const SelectRoleView({super.key});
@@ -13,10 +16,7 @@ class SelectRoleView extends StatefulWidget {
 }
 
 class _SelectRoleViewState extends State<SelectRoleView> {
-  final passwordController = TextEditingController();
-
   final key = GlobalKey<FormState>();
-
   final List<UserRole> getUserRole = [
     UserRole.user,
     UserRole.makeupArtist,
@@ -26,46 +26,91 @@ class _SelectRoleViewState extends State<SelectRoleView> {
   UserRole? _selectedRole;
 
   void validateAndSubmit() {
-    if (key.currentState!.validate()) {
+    if (key.currentState!.validate() && _selectedRole != null) {
       _submitRole();
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Choose Your Role',
-            style: TextStyle(color: Colors.black)),
-      ),
-      body: Form(
-        key: key,
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text(
-                'Please select your role:',
-                style: TextStyle(fontSize: 20),
-              ),
-              const SizedBox(height: 20),
-              ...getUserRole.map((role) => RadioListTile<UserRole>(
-                    title: Text(role.name),
-                    value: role,
-                    groupValue: _selectedRole,
-                    onChanged: (value) {
-                      setState(() {
-                        _selectedRole = value;
-                      });
-                    },
-                  )),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _selectedRole != null ? validateAndSubmit : null,
-                child: const Text('Continue'),
-              ),
-            ],
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          title: const Text('Choose Your Role',
+              style: TextStyle(color: Colors.black)),
+        ),
+        body: Form(
+          key: key,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Image.asset(scale: 2, "lib/assets/images/wedding logo.png"),
+                const Text(
+                  'Please select your role:',
+                  style: TextStyle(fontSize: 20),
+                ),
+                ...getUserRole.map((role) => RadioListTile<UserRole>(
+                      activeColor: AppTheme.maincolor,
+                      selectedTileColor: Colors.blue.withOpacity(0.1),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      splashRadius: 10,
+                      title: Text(role.name),
+                      value: role,
+                      groupValue: _selectedRole,
+                      onChanged: (value) {
+                        setState(() {
+                          _selectedRole = value;
+                        });
+                      },
+                    )),
+                BlocConsumer<AuthCubit, AuthState>(
+                  listener: (context, state) {
+                    if (state is SaveDateLoaded) {
+                      ScaffoldMessageApp.snakeBar(context, "Success");
+                      context.go("/");
+                    }
+                    if (state is SaveDateFailur) {
+                      ScaffoldMessageApp.snakeBar(context, state.error);
+                    }
+                  },
+                  builder: (context, state) {
+                    return ElevatedButton(
+                      style: ButtonStyle(
+                        minimumSize: const WidgetStatePropertyAll(
+                            Size(double.infinity, 60)),
+                        backgroundColor: WidgetStatePropertyAll(
+                          AppTheme.maincolor,
+                        ),
+                        shape: WidgetStatePropertyAll(
+                          RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        elevation: const WidgetStatePropertyAll(5),
+                      ),
+                      onPressed:
+                          _selectedRole != null ? validateAndSubmit : null,
+                      child: state is SaveDateLoading
+                          ? const CircularProgressIndicator(
+                              color: Colors.white,
+                            )
+                          : const Text(
+                              'Continue',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                    );
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -73,23 +118,9 @@ class _SelectRoleViewState extends State<SelectRoleView> {
   }
 
   void _submitRole() async {
+    FocusScope.of(context).unfocus();
     if (_selectedRole != null) {
-      try {
-        final userId = FirebaseAuth.instance.currentUser!.uid;
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(userId)
-            .update({'role': _selectedRole!.name});
-        if (mounted) {
-          context.go("/");
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text('Error updating role: $e')),
-          );
-        }
-      }
+      await context.read<AuthCubit>().setData(_selectedRole!.name);
     }
   }
 }

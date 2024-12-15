@@ -1,4 +1,5 @@
 import 'package:el_wedding/features/auth/presentation/widgets/button_google.dart';
+import 'package:el_wedding/features/auth/presentation/widgets/divider_with_or_text.dart';
 import 'package:el_wedding/features/auth/presentation/widgets/forget_pass_button.dart';
 import 'package:el_wedding/features/auth/presentation/widgets/auth_input_field.dart';
 import 'package:el_wedding/features/auth/presentation/widgets/login_button.dart';
@@ -7,7 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import '../cubit/auth_cubit/auth_cubit.dart';
 import 'button_for_sign_up_view.dart';
-import 'divider_with_or_text.dart';
 
 class LoginViewContent extends StatefulWidget {
   const LoginViewContent({super.key});

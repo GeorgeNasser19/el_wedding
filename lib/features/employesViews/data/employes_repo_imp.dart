@@ -43,7 +43,7 @@ class EmployesRepoImp extends EmployesRepo {
       // رفع صورة الملف الشخصي
       if (emplyesModel.image != null) {
         final storageRef =
-            _storage.ref().child('users/${emplyesModel.id}/profile_image.jpg');
+            _storage.ref().child('users"/${emplyesModel.id}/profile_image.jpg');
         final uploadTask = storageRef.putFile(emplyesModel.image!);
         final snapshot = await uploadTask;
         imageUrl = await snapshot.ref.getDownloadURL();
@@ -56,7 +56,7 @@ class EmployesRepoImp extends EmployesRepo {
       if (emplyesModel.images != null && emplyesModel.images!.isNotEmpty) {
         for (var imageFile in emplyesModel.imageUrls) {
           final storageRef = _storage.ref().child(
-              'users/${emplyesModel.id}/additional_images/${DateTime.now().millisecondsSinceEpoch}.jpg');
+              'users{emplyesModel.id}/additional_images/${DateTime.now().millisecondsSinceEpoch}.jpg');
           final uploadTask = storageRef.putFile(File(imageFile));
           final snapshot = await uploadTask;
           final url = await snapshot.ref.getDownloadURL();

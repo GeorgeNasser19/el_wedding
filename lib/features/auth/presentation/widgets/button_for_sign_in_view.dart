@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class ButtonForSignIn extends StatelessWidget {
-  const ButtonForSignIn({super.key});
+  const ButtonForSignIn({
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {

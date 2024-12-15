@@ -1,187 +1,191 @@
 import 'dart:developer';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
-import 'package:el_wedding/core/error/error_handling.dart';
-import 'package:el_wedding/features/auth/data/model/user_model.dart';
-import 'package:el_wedding/features/auth/domin/usecase/auth_repo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import '../../../core/error/error_handling.dart';
+import '../data/model/user_model.dart';
+import '../domin/usecase/auth_repo.dart';
 
-// This class implements authentication functionalities based on the AuthRepo contract
 class AuthRepoImp extends AuthRepo {
-  final FirebaseAuth firebaseAuth; // FirebaseAuth instance for authentication
-  final FirebaseFirestore
-      firestore; // Firestore instance for database operations
+  final FirebaseAuth firebaseAuth;
+  final FirebaseFirestore firestore;
 
   AuthRepoImp({required this.firebaseAuth, required this.firestore});
 
-  // Login function with email and password
+  /// تسجيل الدخول باستخدام البريد الإلكتروني وكلمة المرور
   @override
-  Future<Either<String, UserModel>> login(String email, String password) async {
+  Future<Either<String, void>> login(String email, String password) async {
     try {
-      // Attempt to sign in with email and password
-      UserCredential userCredential = await firebaseAuth
-          .signInWithEmailAndPassword(email: email, password: password);
-
-      // Retrieve user data from Firestore based on the user's unique ID
-      DocumentSnapshot userDoc = await firestore
-          .collection('users')
-          .doc(userCredential.user?.uid)
-          .get();
-
-      // Check if user document exists in Firestore
-      if (userDoc.exists) {
-        final userData = userDoc.data() as Map<String, dynamic>;
-        return Right(UserModel(
-          id: userCredential.user!.uid,
-          name: userData["name"],
-          email: email,
-          role: userData["role"],
-        ));
-      }
+      await firebaseAuth.signInWithEmailAndPassword(
+          email: email, password: password);
+      return const Right(null);
     } on FirebaseAuthException catch (e) {
-      return left(ErrorHandling.mapFirebaseLoginExceptionMessage(
-          e)); // Map specific error messages
+      log("Firebase Login Error: ${e.message}");
+      return Left(ErrorHandling.mapFirebaseLoginExceptionMessage(e));
     } catch (e) {
-      return left("please try again"); // Handle unexpected errors
+      log("Unexpected Login Error: $e");
+      return const Left("An unexpected error occurred. Please try again.");
     }
-
-    return const Left(
-        'User document does not exist'); // Return if user doc is missing
   }
 
-  // Register function for creating new user with email, password, name, and role
+  /// تسجيل مستخدم جديد باستخدام البريد الإلكتروني وكلمة المرور
   @override
-  Future<Either<String, UserModel>> register(
-      String name, String email, String password, String role) async {
+  Future<Either<String, void>> register(
+      String email, String password, String name) async {
     try {
-      // Create a new user with email and password
-      UserCredential userCredential = await firebaseAuth
-          .createUserWithEmailAndPassword(email: email, password: password);
-
-      // Store user data in Firestore
-      await firestore.collection("users").doc(userCredential.user?.uid).set({
-        "name": name,
-        "email": email,
-        "role": role,
-        "isProfileComplete": false
-      });
-
-      return Right(UserModel(
-        id: userCredential.user!.uid,
-        name: name,
+      // إنشاء مستخدم جديد في Firebase Auth
+      final userCredential = await firebaseAuth.createUserWithEmailAndPassword(
         email: email,
-        role: role,
-      ));
+        password: password,
+      );
+
+      // الحصول على معرف المستخدم UID
+      final userId = userCredential.user?.uid;
+
+      if (userId == null) {
+        return const Left("Failed to retrieve user ID after registration.");
+      }
+
+      final userDocRef = firestore.collection("users").doc(userId);
+
+      // التحقق مما إذا كان المستند موجودًا
+      final docSnapshot = await userDocRef.get();
+      if (!docSnapshot.exists) {
+        // إذا لم يكن موجودًا، قم بإنشائه
+        await userDocRef.set({
+          "email": email,
+          "name": name,
+          "isSelectedRole": false, // تعيين القيمة الافتراضية
+        });
+      } else {
+        // إذا كان موجودًا، قم بتحديث البيانات فقط
+        await userDocRef.update({"email": email, "name": name});
+      }
+
+      return const Right(null);
     } on FirebaseAuthException catch (e) {
-      log(e.toString());
-      return left(ErrorHandling.mapFirebaseRegisterExceptionMessage(
-          e)); // Map specific error messages
+      log("Firebase Register Error: ${e.message}");
+      return Left(ErrorHandling.mapFirebaseRegisterExceptionMessage(e));
     } catch (e) {
-      return left("please try again"); // Handle unexpected errors
+      log("Unexpected Register Error: $e");
+      return const Left("An unexpected error occurred. Please try again.");
     }
   }
 
-  // Google sign-in function
+  /// تسجيل الدخول باستخدام Google
   @override
-  Future<Either<String, UserModel>> signWithGoogle() async {
+  Future<Either<String, void>> signWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-
       if (googleUser == null) {
-        return const Left("Failed to sign in with Google.");
+        return const Left("تم إلغاء تسجيل الدخول باستخدام Google.");
       }
 
-      final GoogleSignInAuthentication? googleAuth =
-          await googleUser.authentication;
-
-      if (googleAuth == null) {
-        return const Left("Failed to authenticate Google user.");
-      }
+      final googleAuth = await googleUser.authentication;
 
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      UserCredential userCredential =
+      final userCredential =
           await firebaseAuth.signInWithCredential(credential);
+      final user = userCredential.user;
 
-      if (userCredential.user == null) {
-        return const Left("Failed to sign in with credentials.");
+      if (user == null) {
+        return const Left(
+            "فشل في الحصول على بيانات المستخدم بعد تسجيل الدخول.");
       }
 
-      // Check if user exists in Firestore
-      DocumentSnapshot userDoc = await firestore
-          .collection('users')
-          .doc(userCredential.user?.uid)
-          .get();
+      final userDocRef = firestore.collection("users").doc(user.uid);
 
-      if (!userDoc.exists) {
-        // New user, store initial data with role and password as null
-        await firestore.collection("users").doc(userCredential.user?.uid).set({
-          "name": googleUser.displayName,
-          "email": googleUser.email,
-          "role": null,
-          "isProfileComplete": false
-        });
+      // التحقق مما إذا كان المستند موجودًا
+      final docSnapshot = await userDocRef.get();
 
-        return const Left("new_user"); // Indicate new user status
+      if (docSnapshot.exists) {
+        firestore.collection("users").doc(user.uid).get();
       } else {
-        // Existing user, retrieve data from Firestore
-        final userData = userDoc.data() as Map<String, dynamic>?;
-
-        if (userData == null || !userData.containsKey('role')) {
-          return const Left("User data is invalid or missing.");
-        }
-
-        // Construct UserModel from Firestore data
-        UserModel user = UserModel(
-          id: userCredential.user!.uid,
-          name: googleUser.displayName!,
-          email: googleUser.email,
-          role: (userData["role"]),
-        );
-
-        return Right(user); // Indicate loaded status
+        await userDocRef.set({
+          "email": user.email,
+          "name": user.displayName,
+          "isSelectedRole": false, // تعيين القيمة الافتراضية
+        });
       }
-    } on FirebaseAuthException catch (e) {
-      return Left(ErrorHandling.mapFirebaseRegisterExceptionMessage(e));
+
+      return const Right(null);
     } catch (e) {
-      return const Left("An unknown error occurred. Please try again.");
+      log("Google Sign-in Error: $e");
+      return const Left(
+          "حدث خطأ أثناء تسجيل الدخول باستخدام Google. يرجى المحاولة مرة أخرى.");
     }
   }
 
-  // Function to handle password reset
+  /// إعادة تعيين كلمة المرور
   @override
   Future<Either<String, void>> forgetPassword(String email) async {
     try {
       await firebaseAuth.sendPasswordResetEmail(email: email);
-      return const Right(null); // Successfully sent reset email
+      return const Right(null);
     } on FirebaseAuthException catch (e) {
-      return left(ErrorHandling.mapFirebaseForgotPasswordExceptionMessage(
-          e)); // Map specific error messages
+      log("Firebase Reset Password Error: ${e.message}");
+      return Left(ErrorHandling.mapFirebaseForgotPasswordExceptionMessage(e));
     } catch (e) {
-      return left("An unknown error occurred. Please try again.");
+      log("Unexpected Password Reset Error: $e");
+      return const Left("An unexpected error occurred. Please try again.");
     }
   }
 
-  // Logout function
+  /// تسجيل الخروج
   @override
   Future<void> logout() async {
-    return await firebaseAuth.signOut();
+    try {
+      await firebaseAuth.signOut();
+    } catch (e) {
+      log("Logout Error: $e");
+    }
   }
 
+  /// الحصول على المستخدم الحالي
   @override
   Future<User?> getCurrentUser() async {
-    return firebaseAuth.currentUser;
+    try {
+      return firebaseAuth.currentUser;
+    } catch (e) {
+      log("Error fetching current user: $e");
+      return null;
+    }
   }
 
+  /// مراقبة حالة المستخدم (Logged In / Logged Out)
   @override
   Stream<User?> changeState() {
-    final user = firebaseAuth.authStateChanges();
+    return firebaseAuth.authStateChanges();
+  }
 
-    return user;
+  /// إضافة بيانات المستخدم إلى Firestore
+  @override
+  Future<Either<String, void>> setDate(String role) async {
+    try {
+      final userId = firebaseAuth.currentUser?.uid;
+
+      if (userId == null) {
+        return const Left("No user is currently logged in.");
+      }
+
+      await firestore.collection("users").doc(userId).update({
+        "role": role,
+        "isSelectedRole": true,
+      });
+      await firestore
+          .collection("users")
+          .doc(userId)
+          .update({"isSelectedRole": true});
+
+      return const Right(null);
+    } catch (e) {
+      log("Error setting user data: $e");
+      return const Left("Failed to save user data. Please try again.");
+    }
   }
 }

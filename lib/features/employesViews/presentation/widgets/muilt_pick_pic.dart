@@ -13,6 +13,7 @@ class MultiImagePickerWidget extends StatefulWidget {
   });
 
   @override
+  // ignore: library_private_types_in_public_api
   _MultiImagePickerWidgetState createState() => _MultiImagePickerWidgetState();
 }
 
@@ -22,6 +23,7 @@ class _MultiImagePickerWidgetState extends State<MultiImagePickerWidget> {
 
   Future<void> _pickImages() async {
     try {
+      // ignore: unnecessary_nullable_for_final_variable_declarations
       final List<XFile>? images = await _picker.pickMultiImage(limit: 5);
 
       if (images != null) {
@@ -33,6 +35,7 @@ class _MultiImagePickerWidgetState extends State<MultiImagePickerWidget> {
         });
       }
     } catch (e) {
+      // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('حدث خطأ أثناء اختيار الصور: $e'),

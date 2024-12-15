@@ -8,3 +8,7 @@ sealed class SelectRoleState extends Equatable {
 }
 
 final class SelectRoleInitial extends SelectRoleState {}
+
+final class SelectRoleLoading extends SelectRoleState {}
+
+final class SelectRoleLoaded extends SelectRoleState {}

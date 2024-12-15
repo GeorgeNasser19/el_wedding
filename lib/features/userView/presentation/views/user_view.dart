@@ -7,16 +7,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/helpers/sheard_pref.dart';
+
 class UserView extends StatelessWidget {
   const UserView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final role = SharedPrefs().getString("role");
+
     return BlocProvider(
       create: (context) => AuthCubit(AuthRepoUsecase(AuthRepoImp(
           firebaseAuth: FirebaseAuth.instance,
           firestore: FirebaseFirestore.instance))),
       child: Scaffold(
+        appBar: AppBar(
+          title: Text(role ?? "no role"),
+        ),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -31,7 +38,8 @@ class UserView extends StatelessWidget {
               BlocConsumer<AuthCubit, AuthState>(
                 listener: (context, state) {
                   if (state is SignOutSuccess) {
-                    context.go("/LoginView");
+                    context.go("/LoginView", extra: role);
+                    SharedPrefs().remove("role_user");
                   }
                   if (state is SignOutFailure) {
                     ScaffoldMessenger.of(context).showSnackBar(

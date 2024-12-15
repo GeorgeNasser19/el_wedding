@@ -8,7 +8,10 @@ import '../../../../core/theme.dart';
 import '../../../../core/widgets/button_custom.dart';
 
 class SignupButton extends StatelessWidget {
-  const SignupButton({super.key, required this.validateAndSubmit});
+  const SignupButton({
+    super.key,
+    required this.validateAndSubmit,
+  });
 
   final VoidCallback validateAndSubmit;
   @override
@@ -17,7 +20,9 @@ class SignupButton extends StatelessWidget {
       listener: (context, state) {
         if (state is RegisterLoaded) {
           // Navigate to home page on login success
-          context.go("/");
+          context.go(
+            "/",
+          );
         }
         if (state is RegisterFauilar) {
           // Show error message if login fails

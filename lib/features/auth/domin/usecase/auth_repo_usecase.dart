@@ -9,20 +9,29 @@ class AuthRepoUsecase {
 
   AuthRepoUsecase(this.authRepo);
 
-  Future<Either<String, UserModel>> login(String email, String password) async {
-    return await authRepo.login(email, password);
+  Future<Either<String, void>> login(
+    String email,
+    String password,
+  ) async {
+    return await authRepo.login(
+      email,
+      password,
+    );
   }
 
-  Future<Either<String, UserModel>> register(
-      String email, String password, String name, String role) async {
-    return await authRepo.register(email, password, name, role);
+  Future<Either<String, void>> register(
+    String email,
+    String password,
+    String name,
+  ) async {
+    return await authRepo.register(email, password, name);
   }
 
   Future<void> logout() {
     return authRepo.logout();
   }
 
-  Future<Either<String, UserModel>> signWithGoogle() async {
+  Future<Either<String, void>> signWithGoogle() async {
     return await authRepo.signWithGoogle();
   }
 
@@ -36,5 +45,11 @@ class AuthRepoUsecase {
 
   Stream<User?> changeState() {
     return authRepo.changeState();
+  }
+
+  Future<Either<String, void>> setData(
+    String role,
+  ) async {
+    return await authRepo.setDate(role);
   }
 }

@@ -1,3 +1,4 @@
+// ignore: depend_on_referenced_packages
 import 'package:bloc/bloc.dart';
 import 'package:el_wedding/features/auth/data/model/user_model.dart';
 import 'package:el_wedding/features/userView/domain/usecase_user_view/usecase_user_view.dart';

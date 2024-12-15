@@ -17,20 +17,19 @@ class ButtonGoogle extends StatelessWidget {
     return BlocConsumer<AuthCubit, AuthState>(
       listener: (context, state) {
         if (state is GoogleLoaded) {
-          context.go("/"); // Navigate to login view on Google sign-in success
+          context.go("/");
+          // Navigate to login view on Google sign-in success
         }
         if (state is GoogleFauilar) {
           // Show error message if Google sign-in fails
           ScaffoldMessageApp.snakeBar(context, state.message);
         }
-        if (state is GoogleNewUser) {
-          // Navigate to role selection view for new Google users
-          context.go("/selectRoleView");
-        }
       },
       builder: (context, state) {
         return ButtonCustom(
-            onpressed: context.read<AuthCubit>().signInWithGoogle,
+            onpressed: () {
+              context.read<AuthCubit>().signInWithGoogle();
+            },
             bgColor: Colors.white,
             child: state is GoogleLoading
                 ? const CircularProgressIndicator() // Show loading indicator during Google sign-in

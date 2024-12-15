@@ -19,12 +19,14 @@ class UserModel {
   final String email;
   final String? role;
   final bool isProfileComplete;
+  final bool isSeletectRole;
 
   UserModel(
       {required this.id,
       required this.name,
       required this.email,
       required this.role,
+      this.isSeletectRole = false,
       this.isProfileComplete = false});
 
   factory UserModel.fromDoc(Map<String, dynamic> doc) {
@@ -33,7 +35,7 @@ class UserModel {
       name: doc['name'] ?? "",
       email: doc['email'] ?? "",
       role: doc['role'] ?? "",
-      isProfileComplete: doc['isProfileComplete'] ?? "",
+      isSeletectRole: doc['isSeletectRole'] ?? false,
     );
   }
 
@@ -44,6 +46,7 @@ class UserModel {
       'email': email,
       'role': role ?? "",
       'isProfileComplete': isProfileComplete,
+      "isSeletectRole": isSeletectRole
     };
   }
 

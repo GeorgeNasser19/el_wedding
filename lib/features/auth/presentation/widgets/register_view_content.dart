@@ -1,7 +1,5 @@
 import 'package:el_wedding/core/helpers/input_feild_with_text.dart';
 import 'package:el_wedding/core/validation.dart';
-import 'package:el_wedding/features/auth/data/model/user_model.dart';
-import 'package:el_wedding/features/auth/presentation/widgets/auth_drop_down_button.dart';
 import 'package:el_wedding/features/auth/presentation/widgets/auth_header.dart';
 import 'package:el_wedding/features/auth/presentation/widgets/auth_input_field.dart';
 import 'package:el_wedding/features/auth/presentation/widgets/button_for_sign_in_view.dart';
@@ -14,7 +12,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import '../cubit/auth_cubit/auth_cubit.dart';
 
 class RegisterViewContent extends StatefulWidget {
-  const RegisterViewContent({super.key});
+  const RegisterViewContent({
+    super.key,
+  });
 
   @override
   State<RegisterViewContent> createState() => _RegisterViewContentState();
@@ -25,9 +25,7 @@ class _RegisterViewContentState extends State<RegisterViewContent> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  // string field for role selected
-  UserRole? selectedRole;
-  // List of roles for dropdown menu
+
   // boolean field for visibility
   bool isPasswordVisible = true;
   // String field for text error message from unSelected role
@@ -47,21 +45,13 @@ class _RegisterViewContentState extends State<RegisterViewContent> {
   // Function to validate form and initiate registration
   void validateAndSubmit() {
     if (_formkey.currentState!.validate()) {
-      if (selectedRole == null) {
-        // Display error if no role is selected
-        setState(() {
-          errorText = "Please select a role.";
-        });
-      } else {
-        errorText = null;
-        // Call the register function from AuthCubit with user inputs
-        context.read<AuthCubit>().register(
-              emailController.text,
-              passwordController.text,
-              nameController.text,
-              selectedRole!.name,
-            );
-      }
+      errorText = null;
+      // Call the register function from AuthCubit with user inputs
+      context.read<AuthCubit>().register(
+            emailController.text,
+            passwordController.text,
+            nameController.text,
+          );
     }
   }
 
@@ -89,24 +79,13 @@ class _RegisterViewContentState extends State<RegisterViewContent> {
               "Name",
               nameController,
               ValidationApp.validateName),
-        ), // Dropdown menu for selecting role
-        RoleDropdown(
-          onRoleChanged: (newValue) {
-            setState(() {
-              selectedRole = newValue;
-              errorText = null;
-            });
-          },
-          selectedRole: selectedRole,
         ),
-        // Error Text for Unselecting role
-        Text(
-          errorText ?? "",
-          style: const TextStyle(color: Colors.red),
-        ),
+
         const SizedBox(height: 5),
         // Custom button for submitting registration form
-        SignupButton(validateAndSubmit: validateAndSubmit),
+        SignupButton(
+          validateAndSubmit: validateAndSubmit,
+        ),
         const SizedBox(height: 26),
         // Divider with text for alternative sign-up method
         const DividerWithOrText(

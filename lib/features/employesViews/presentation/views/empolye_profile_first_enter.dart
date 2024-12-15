@@ -30,7 +30,7 @@ class _EmpolyeProfileFirstEnter extends State<EmpolyeProfileFirstEnter> {
   final _formKey = GlobalKey<FormState>();
 
   // Controllers to handle the text input fields.
-  final TextEditingController fname = TextEditingController();
+  late final TextEditingController fname;
   final TextEditingController description = TextEditingController();
   final TextEditingController location = TextEditingController();
   final TextEditingController pNumber = TextEditingController();
@@ -45,6 +45,12 @@ class _EmpolyeProfileFirstEnter extends State<EmpolyeProfileFirstEnter> {
   List<Map<String, dynamic>> services = [
     {'name': '', 'price': 0.0} // Initial empty service entry.
   ];
+
+  @override
+  void initState() {
+    fname = TextEditingController(text: widget.userName);
+    super.initState();
+  }
 
   // This method saves the employee's profile data to Firebase.
   void saveData() {

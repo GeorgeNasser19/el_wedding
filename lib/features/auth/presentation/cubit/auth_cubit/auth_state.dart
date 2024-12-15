@@ -26,11 +26,7 @@ final class LoginFauilar extends AuthState {
 
 final class RegisterLoading extends AuthState {}
 
-final class RegisterLoaded extends AuthState {
-  final UserModel user;
-
-  const RegisterLoaded(this.user);
-}
+final class RegisterLoaded extends AuthState {}
 
 final class RegisterFauilar extends AuthState {
   final String message;
@@ -40,13 +36,7 @@ final class RegisterFauilar extends AuthState {
 
 final class GoogleLoading extends AuthState {}
 
-final class GoogleNewUser extends AuthState {}
-
-final class GoogleLoaded extends AuthState {
-  final UserModel user;
-
-  const GoogleLoaded(this.user);
-}
+final class GoogleLoaded extends AuthState {}
 
 final class GoogleFauilar extends AuthState {
   final String message;
@@ -80,3 +70,12 @@ class SignOutFailure extends AuthState {
 class GetUserId extends AuthState {}
 
 class ChangeState extends AuthState {}
+
+class SaveDateLoading extends AuthState {}
+
+class SaveDateLoaded extends AuthState {}
+
+class SaveDateFailur extends AuthState {
+  final String error;
+  const SaveDateFailur(this.error);
+}

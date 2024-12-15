@@ -3,7 +3,6 @@ import 'dart:developer';
 
 // ignore: depend_on_referenced_packages
 import 'package:bloc/bloc.dart';
-import 'package:el_wedding/features/auth/data/model/user_model.dart';
 import 'package:el_wedding/features/auth/domin/usecase/auth_repo_usecase.dart';
 import 'package:equatable/equatable.dart';
 
@@ -20,12 +19,18 @@ class AuthCubit extends Cubit<AuthState> {
 
   final AuthRepoUsecase authRepoUsecase;
 
-  Future<void> login(String email, String password) async {
+  Future<void> login(
+    String email,
+    String password,
+  ) async {
     if (state is! LoginLoading) {
       emit(LoginLoading());
     }
 
-    final result = await authRepoUsecase.login(email, password);
+    final result = await authRepoUsecase.login(
+      email,
+      password,
+    );
 
     result.fold(
       (fail) => emit(LoginFauilar(fail)),
@@ -34,13 +39,16 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> register(
-      String email, String password, String name, String role) async {
+    String email,
+    String password,
+    String name,
+  ) async {
     emit(RegisterLoading());
-    final result = await authRepoUsecase.register(name, email, password, role);
+    final result = await authRepoUsecase.register(email, password, name);
 
     result.fold(
       (fail) => emit(RegisterFauilar((fail.toString()))),
-      (user) => emit(RegisterLoaded(user)),
+      (_) => emit(RegisterLoaded()),
     );
   }
 
@@ -56,23 +64,18 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> signInWithGoogle() async {
-    if (isClosed) return; // التأكد من أن Cubit لم يُغلق
+    // التأكد من أن Cubit لم يُغلق
     emit(GoogleLoading());
 
     final result = await authRepoUsecase.signWithGoogle();
 
-    if (isClosed) return; // التأكد مرة أخرى بعد انتظار الاستجابة
+    // التأكد مرة أخرى بعد انتظار الاستجابة
     result.fold(
       (error) {
-        if (isClosed) return; // التأكد من عدم الإغلاق قبل إرسال الحالة
-        if (error == "new_user") {
-          emit(GoogleNewUser());
-        } else {
-          emit(GoogleFauilar(error));
-        }
+        emit(GoogleFauilar(error)); // التأكد من عدم الإغلاق قبل إرسال الحالة
       },
       (user) {
-        if (!isClosed) emit(GoogleLoaded(user)); // تحقق أخير من isClosed
+        if (!isClosed) emit(GoogleLoaded()); // تحقق أخير من isClosed
       },
     );
   }
@@ -87,6 +90,20 @@ class AuthCubit extends Cubit<AuthState> {
       },
       (_) {
         emit(ForgotPasswordEmailSentSuccess(email));
+      },
+    );
+  }
+
+  Future<void> setData(String role) async {
+    emit(SaveDateLoading());
+    final result = await authRepoUsecase.setData(role);
+
+    result.fold(
+      (error) {
+        emit(SaveDateFailur(error));
+      },
+      (_) {
+        emit(SaveDateLoaded());
       },
     );
   }
