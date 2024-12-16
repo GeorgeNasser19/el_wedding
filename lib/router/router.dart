@@ -1,23 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:el_wedding/check_auth.dart';
+import 'package:el_wedding/core/shared_services/shared_service_usecase/shared_services_usecase.dart';
+import 'package:el_wedding/core/shared_services/shared_services_rpeo_imp/shared_services_repo_impl.dart';
 import 'package:el_wedding/core/widgets/error_page.dart';
 import 'package:el_wedding/features/auth/data/auth_repo_imp.dart';
+import 'package:el_wedding/features/auth/data/model/user_model.dart';
 import 'package:el_wedding/features/auth/domin/usecase/auth_repo_usecase.dart';
 import 'package:el_wedding/features/auth/presentation/cubit/auth_cubit/auth_cubit.dart';
+import 'package:el_wedding/features/auth/presentation/cubit/check_auth_cubit/check_auth_cubit.dart';
+import 'package:el_wedding/features/auth/presentation/views/check_auth_view.dart';
 import 'package:el_wedding/features/auth/presentation/views/forget_password_view.dart';
 import 'package:el_wedding/features/auth/presentation/views/login_view.dart';
 import 'package:el_wedding/features/auth/presentation/views/register_view.dart';
 import 'package:el_wedding/features/employesViews/data/model/employes_model.dart';
-import 'package:el_wedding/features/employesViews/presentation/widgets/employe_edit_profile_body.dart';
-import 'package:el_wedding/features/select_role/data/select_role_repo_impl.dart';
-import 'package:el_wedding/features/select_role/domain/usecase_select_role/usecase_select_role.dart';
-import 'package:el_wedding/features/select_role/presentation/cubit/select_role_cubit.dart';
+import 'package:el_wedding/features/employesViews/presentation/views/employee_edit_profile.dart';
+import 'package:el_wedding/features/employesViews/presentation/widgets/employe_edit_profile_contant.dart';
 import 'package:el_wedding/features/select_role/presentation/views/select_role_view.dart';
 import 'package:el_wedding/features/employesViews/presentation/views/empolye_profile_first_enter.dart';
 import 'package:el_wedding/features/userView/presentation/views/user_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 
 import '../features/employesViews/presentation/views/empolye_profile.dart';
 
@@ -28,9 +31,14 @@ class AppRouter {
       GoRoute(
           path: '/',
           builder: (context, state) => BlocProvider(
-                create: (context) =>
-                    SelectRoleCubit(UsecaseSelectRole(SelectRoleRepoImpl())),
-                child: const CheckAuthPage(),
+                create: (context) => CheckAuthCubit(
+                    AuthRepoUsecase(AuthRepoImp(
+                        googleSignIn: GoogleSignIn(),
+                        firebaseAuth: FirebaseAuth.instance,
+                        firestore: FirebaseFirestore.instance)),
+                    SharedServicesUsecase(SharedServicesRepoImpl()))
+                  ..checkAuth(),
+                child: const CheckAuthView(),
               )),
       // Route for RegisterView
       GoRoute(
@@ -50,9 +58,10 @@ class AppRouter {
         builder: (context, state) {
           return BlocProvider(
             create: (context) => AuthCubit(AuthRepoUsecase(AuthRepoImp(
+                googleSignIn: GoogleSignIn(),
                 firebaseAuth: FirebaseAuth.instance,
                 firestore: FirebaseFirestore.instance))),
-            child: SelectRoleView(),
+            child: const SelectRoleView(),
           );
         },
       ),
@@ -87,7 +96,7 @@ class AppRouter {
         path: '/EmployeEditProfileBody',
         builder: (context, state) {
           final employesModel = state.extra as EmployeeModel;
-          return EmployeEditProfileBody(
+          return EmployeEditProfileContant(
             employesModel: employesModel,
           );
         },
@@ -95,7 +104,17 @@ class AppRouter {
       GoRoute(
         path: '/UserView',
         builder: (context, state) {
-          return const UserView();
+          final userModel = state.extra as UserModel;
+          return UserView(
+            userModel: userModel,
+          );
+        },
+      ),
+      GoRoute(
+        path: '/EmployeeEditProfile',
+        builder: (context, state) {
+          final employeeModel = state.extra as EmployeeModel;
+          return EmployeeEditProfile(employeeModel: employeeModel);
         },
       ),
     ],

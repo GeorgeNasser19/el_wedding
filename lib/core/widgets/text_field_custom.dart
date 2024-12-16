@@ -5,6 +5,7 @@ class TextFieldCustom extends StatelessWidget {
       {super.key,
       required this.controller,
       required this.hintText,
+      this.initialValue,
       this.style,
       this.hintmaxline,
       this.maxline,
@@ -18,6 +19,7 @@ class TextFieldCustom extends StatelessWidget {
 
   final TextEditingController controller;
   final String hintText;
+  final String? initialValue;
   final InputBorder border;
   final TextStyle? style;
   final Widget? icon;
@@ -32,6 +34,7 @@ class TextFieldCustom extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      initialValue: initialValue,
       textInputAction: textInputAction,
       keyboardType: keyboardType,
       maxLines: maxline,

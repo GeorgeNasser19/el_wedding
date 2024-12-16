@@ -35,6 +35,7 @@ class UserModel {
       name: doc['name'] ?? "",
       email: doc['email'] ?? "",
       role: doc['role'] ?? "",
+      isProfileComplete: doc['isProfileComplete'] ?? false,
       isSeletectRole: doc['isSeletectRole'] ?? false,
     );
   }

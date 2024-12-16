@@ -19,4 +19,6 @@ abstract class AuthRepo {
   Future<void> logout();
 
   Future<User?> getCurrentUser();
+
+  Future<bool> checkIfRoleIsNotSelected(String userId);
 }

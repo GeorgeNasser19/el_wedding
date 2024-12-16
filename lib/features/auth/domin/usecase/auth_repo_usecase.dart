@@ -1,5 +1,4 @@
 import 'package:dartz/dartz.dart';
-import 'package:el_wedding/features/auth/data/model/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'auth_repo.dart';
@@ -39,7 +38,7 @@ class AuthRepoUsecase {
     return await authRepo.forgetPassword(email);
   }
 
-  Future<User?> getUserId() async {
+  Future<User?> getUser() async {
     return await authRepo.getCurrentUser();
   }
 
@@ -51,5 +50,9 @@ class AuthRepoUsecase {
     String role,
   ) async {
     return await authRepo.setDate(role);
+  }
+
+  Future<bool> checkIfRoleIsNotSelected(String userId) async {
+    return await authRepo.checkIfRoleIsNotSelected(userId);
   }
 }

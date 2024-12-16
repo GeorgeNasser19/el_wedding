@@ -4,14 +4,17 @@ import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import '../../../core/error/error_handling.dart';
-import '../data/model/user_model.dart';
 import '../domin/usecase/auth_repo.dart';
 
 class AuthRepoImp extends AuthRepo {
   final FirebaseAuth firebaseAuth;
   final FirebaseFirestore firestore;
+  final GoogleSignIn googleSignIn;
 
-  AuthRepoImp({required this.firebaseAuth, required this.firestore});
+  AuthRepoImp(
+      {required this.googleSignIn,
+      required this.firebaseAuth,
+      required this.firestore});
 
   /// تسجيل الدخول باستخدام البريد الإلكتروني وكلمة المرور
   @override
@@ -56,7 +59,8 @@ class AuthRepoImp extends AuthRepo {
         await userDocRef.set({
           "email": email,
           "name": name,
-          "isSelectedRole": false, // تعيين القيمة الافتراضية
+          "isSelectedRole": false,
+          "isProfileComplete": false // تعيين القيمة الافتراضية
         });
       } else {
         // إذا كان موجودًا، قم بتحديث البيانات فقط
@@ -109,7 +113,8 @@ class AuthRepoImp extends AuthRepo {
         await userDocRef.set({
           "email": user.email,
           "name": user.displayName,
-          "isSelectedRole": false, // تعيين القيمة الافتراضية
+          "isSelectedRole": false,
+          "isProfileComplete": false // تعيين القيمة الافتراضية
         });
       }
 
@@ -141,6 +146,8 @@ class AuthRepoImp extends AuthRepo {
   Future<void> logout() async {
     try {
       await firebaseAuth.signOut();
+      await googleSignIn.signOut();
+      // await googleSignIn.disconnect();
     } catch (e) {
       log("Logout Error: $e");
     }
@@ -187,5 +194,25 @@ class AuthRepoImp extends AuthRepo {
       log("Error setting user data: $e");
       return const Left("Failed to save user data. Please try again.");
     }
+  }
+
+  @override
+  Future<bool> checkIfRoleIsNotSelected(String userId) async {
+    try {
+      final doc = await FirebaseFirestore.instance
+          .collection("users")
+          .doc(userId)
+          .get();
+
+      if (doc.exists) {
+        final data = doc.data();
+        {
+          return data?['isSelectedRole']; // تأكد من تطابق النوع
+        }
+      }
+    } catch (e) {
+      log("Error checking isSelectedRole: $e");
+    }
+    return true;
   }
 }

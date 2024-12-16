@@ -41,6 +41,10 @@ android {
         }
     }
 }
+dependencies {
+    implementation 'com.google.firebase:firebase-appcheck-playintegrity:16.0.0'
+}
+
 
 flutter {
     source = "../.."

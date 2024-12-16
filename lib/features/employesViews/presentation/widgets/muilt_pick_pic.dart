@@ -1,4 +1,4 @@
-import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -6,10 +6,13 @@ import '../../../../core/theme.dart';
 
 class MultiImagePickerWidget extends StatefulWidget {
   final Function(List<String>?) onImagePicked; // تعديل لتأخذ List من الصور
+  final List<XFile>?
+      initialSelectedImages; // حقل لاستقبال الصور الموجودة مسبقًا
 
   const MultiImagePickerWidget({
     super.key,
     required this.onImagePicked,
+    this.initialSelectedImages,
   });
 
   @override
@@ -19,16 +22,24 @@ class MultiImagePickerWidget extends StatefulWidget {
 
 class _MultiImagePickerWidgetState extends State<MultiImagePickerWidget> {
   final ImagePicker _picker = ImagePicker();
-  List<XFile> _selectedImages = [];
+  late List<XFile> _selectedImages; // حقل محلي لحفظ الصور
+
+  @override
+  void initState() {
+    super.initState();
+    _selectedImages = widget.initialSelectedImages ?? [];
+  }
 
   Future<void> _pickImages() async {
     try {
       // ignore: unnecessary_nullable_for_final_variable_declarations
-      final List<XFile>? images = await _picker.pickMultiImage(limit: 5);
+      final List<XFile>? images = await _picker.pickMultiImage(
+        limit: 5, // تحديد الحد الأقصى للصور
+      );
 
       if (images != null) {
         setState(() {
-          _selectedImages = images;
+          _selectedImages.addAll(images); // إضافة الصور الجديدة
           List<String> imagePaths =
               _selectedImages.map((file) => file.path).toList();
           widget.onImagePicked(imagePaths);
@@ -58,7 +69,7 @@ class _MultiImagePickerWidgetState extends State<MultiImagePickerWidget> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            "Galary",
+            "Gallery",
             style: TextStyle(
               fontSize: 16,
               fontWeight: FontWeight.bold,
@@ -77,8 +88,8 @@ class _MultiImagePickerWidgetState extends State<MultiImagePickerWidget> {
                   ),
                   itemCount: _selectedImages.length,
                   itemBuilder: (context, index) {
-                    return Image.file(
-                      File(_selectedImages[index].path),
+                    return CachedNetworkImage(
+                      imageUrl: _selectedImages[index].path,
                       fit: BoxFit.cover,
                     );
                   },
@@ -89,8 +100,10 @@ class _MultiImagePickerWidgetState extends State<MultiImagePickerWidget> {
               color: AppTheme.maincolor,
             ),
             onPressed: _pickImages,
-            label: Text('Pick Images',
-                style: TextStyle(color: AppTheme.maincolor)),
+            label: Text(
+              'Pick Images',
+              style: TextStyle(color: AppTheme.maincolor),
+            ),
           ),
         ],
       ),

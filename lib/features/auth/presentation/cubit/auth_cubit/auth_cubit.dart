@@ -109,7 +109,7 @@ class AuthCubit extends Cubit<AuthState> {
   }
 
   Future<void> getUserId() async {
-    await authRepoUsecase.getUserId();
+    await authRepoUsecase.getUser();
     emit(GetUserId());
   }
 

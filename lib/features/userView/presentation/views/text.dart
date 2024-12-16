@@ -1,34 +1,26 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:el_wedding/features/auth/data/auth_repo_imp.dart';
-import 'package:el_wedding/features/auth/data/model/user_model.dart';
 import 'package:el_wedding/features/auth/domin/usecase/auth_repo_usecase.dart';
-import 'package:el_wedding/features/auth/presentation/cubit/auth_cubit/auth_cubit.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-import '../../../../core/helpers/sheard_pref.dart';
+import '../../../auth/data/auth_repo_imp.dart';
+import '../../../auth/presentation/cubit/auth_cubit/auth_cubit.dart';
 
-class UserView extends StatelessWidget {
-  const UserView({super.key, required this.userModel});
-
-  final UserModel userModel;
+class TestPage extends StatelessWidget {
+  const TestPage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final role = SharedPrefs().getString("role");
-
     return BlocProvider(
       create: (context) => AuthCubit(AuthRepoUsecase(AuthRepoImp(
           googleSignIn: GoogleSignIn(),
           firebaseAuth: FirebaseAuth.instance,
           firestore: FirebaseFirestore.instance))),
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(role ?? "no role"),
-        ),
+        appBar: AppBar(),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -43,8 +35,7 @@ class UserView extends StatelessWidget {
               BlocConsumer<AuthCubit, AuthState>(
                 listener: (context, state) {
                   if (state is SignOutSuccess) {
-                    context.go("/LoginView", extra: role);
-                    SharedPrefs().remove("role_user");
+                    context.go("/LoginView");
                   }
                   if (state is SignOutFailure) {
                     ScaffoldMessenger.of(context).showSnackBar(

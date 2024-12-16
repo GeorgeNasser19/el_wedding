@@ -33,7 +33,6 @@ class PickImageInEmployeeView extends StatelessWidget {
             onImagePicked(pickedImage);
           });
         }
-
         return Container(
           width: double.infinity,
           padding: const EdgeInsets.all(16),
@@ -44,9 +43,28 @@ class PickImageInEmployeeView extends StatelessWidget {
           child: Column(
             children: [
               pickedImage != null
-                  ? CircleAvatar(
-                      radius: 40,
-                      backgroundImage: FileImage(pickedImage!),
+                  ? Stack(
+                      children: [
+                        CircleAvatar(
+                          radius: 40,
+                          backgroundImage: FileImage(pickedImage!),
+                        ),
+                        Positioned(
+                            bottom: -15,
+                            right: -15,
+                            child: SizedBox(
+                              child: IconButton(
+                                  onPressed: () {
+                                    context
+                                        .read<EmployesCubit>()
+                                        .pickIamge(pickedImage);
+                                  },
+                                  icon: const Icon(
+                                    Icons.camera_alt,
+                                    color: Colors.black,
+                                  )),
+                            ))
+                      ],
                     )
                   : CircleAvatar(
                       radius: 40,
@@ -57,6 +75,9 @@ class PickImageInEmployeeView extends StatelessWidget {
                         icon: const Icon(Icons.add),
                       ),
                     ),
+              const SizedBox(
+                height: 9,
+              ),
               const Text(
                 'Add your Picture',
                 style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),

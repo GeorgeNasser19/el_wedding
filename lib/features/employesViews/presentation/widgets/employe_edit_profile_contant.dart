@@ -1,10 +1,13 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:el_wedding/features/employesViews/data/model/employes_model.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class EmployeEditProfileBody extends StatelessWidget {
-  const EmployeEditProfileBody({super.key, required this.employesModel});
+import '../../../auth/presentation/cubit/auth_cubit/auth_cubit.dart';
+
+class EmployeEditProfileContant extends StatelessWidget {
+  const EmployeEditProfileContant({super.key, required this.employesModel});
 
   final EmployeeModel employesModel;
 
@@ -12,12 +15,61 @@ class EmployeEditProfileBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
+        drawer: Drawer(
+          child: Column(
+            children: [
+              // employee image
+              Container(
+                height: 150,
+                margin: const EdgeInsets.only(top: 24),
+                child: ClipOval(
+                  child: CachedNetworkImage(
+                    imageUrl: employesModel.imageUrl,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ),
+              // employee full name
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 16),
+                child: Text(employesModel.fName,
+                    style: const TextStyle(fontSize: 20)),
+              ),
+              BlocConsumer<AuthCubit, AuthState>(
+                listener: (context, state) {
+                  if (state is SignOutSuccess) {
+                    context.go(
+                      "/LoginView",
+                    );
+                  }
+                  if (state is SignOutFailure) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text(state.error)),
+                    );
+                  }
+                },
+                builder: (context, state) {
+                  return TextButton(
+                    onPressed: () {
+                      context.read<AuthCubit>().logout();
+                    },
+                    child: state is SignOutLoading
+                        ? const CircularProgressIndicator()
+                        : const Text("Log Out",
+                            style:
+                                TextStyle(fontSize: 15, color: Colors.black)),
+                  );
+                },
+              ),
+            ],
+          ),
+        ),
         appBar: AppBar(
           actions: [
             IconButton(
               onPressed: () {
-                context.go("");
-              }, // TODO
+                context.push("/EmployeeEditProfile", extra: employesModel);
+              },
               icon: const Icon(Icons.edit),
             ),
           ],

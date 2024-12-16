@@ -18,8 +18,4 @@ class EmployRepoUsecase {
   Future<Either<String, File>> pickImgae(File? image) async {
     return await employesRepo.pickImage(image);
   }
-
-  Future<Either<String, EmployeeModel>> fetchEmpoleeModel(String userID) async {
-    return await employesRepo.getEmployeData(userID);
-  }
 }

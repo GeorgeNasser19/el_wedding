@@ -12,14 +12,16 @@ Widget buildServiceInput(
       Row(
         children: [
           Expanded(
-            child: TextField(
+            child: TextFormField(
+              initialValue: services[index]['name'] ?? "",
               onChanged: (value) => services[index]['name'] = value,
               decoration: const InputDecoration(labelText: 'Service Name'),
             ),
           ),
           const SizedBox(width: 10),
           Expanded(
-            child: TextField(
+            child: TextFormField(
+              initialValue: services[index]['price'].toString(),
               onChanged: (value) =>
                   services[index]['price'] = double.tryParse(value) ?? 0.0,
               decoration: const InputDecoration(labelText: 'Price'),

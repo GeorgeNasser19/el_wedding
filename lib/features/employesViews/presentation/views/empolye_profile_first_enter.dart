@@ -83,58 +83,60 @@ class _EmpolyeProfileFirstEnter extends State<EmpolyeProfileFirstEnter> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 245, 241, 241),
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        // Displaying the username in the app bar title.
-        title: Text('Update Profile for ${widget.userName}'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          // Wrapping the form in a scroll view for smaller screens.
-          child: Form(
-            key: _formKey, // Assigning the form key.
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Widget for selecting an image.
-                PickImageInEmployeeView(
-                  onImagePicked: (image3) {
-                    image = image3; // Updating the selected image.
-                  },
-                ),
-                const SizedBox(height: 15),
-                // Widget for input fields like name, description, etc.
-                TextFeildsInEmpolyesView(
-                  userName: widget.userName,
-                  fname: fname,
-                  description: description,
-                  location: location,
-                  pNumber: pNumber,
-                ),
-                const SizedBox(height: 16), // Adding space.
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: const Color.fromARGB(255, 245, 241, 241),
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          // Displaying the username in the app bar title.
+          title: Text('Update Profile for ${widget.userName}'),
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: SingleChildScrollView(
+            // Wrapping the form in a scroll view for smaller screens.
+            child: Form(
+              key: _formKey, // Assigning the form key.
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Widget for selecting an image.
+                  PickImageInEmployeeView(
+                    onImagePicked: (image3) {
+                      image = image3; // Updating the selected image.
+                    },
+                  ),
+                  const SizedBox(height: 15),
+                  // Widget for input fields like name, description, etc.
+                  TextFeildsInEmpolyesView(
+                    userName: widget.userName,
+                    fname: fname,
+                    description: description,
+                    location: location,
+                    pNumber: pNumber,
+                  ),
+                  const SizedBox(height: 16), // Adding space.
 
-                // Displaying a list of service inputs dynamically.
-                ServicesInputWidget(
-                  services: services,
-                  onChange: () {
-                    setState(() {});
-                  },
-                ),
+                  // Displaying a list of service inputs dynamically.
+                  ServicesInputWidget(
+                    services: services,
+                    onChange: () {
+                      setState(() {});
+                    },
+                  ),
 
-                // Adding space.
-                const SizedBox(height: 16),
-                // Widget to select multiple images.
-                MultiImagePickerWidget(
-                  onImagePicked: (p0) => _selectedImages = p0,
-                ),
-                const SizedBox(height: 16),
+                  // Adding space.
+                  const SizedBox(height: 16),
+                  // Widget to select multiple images.
+                  MultiImagePickerWidget(
+                    onImagePicked: (p0) => _selectedImages = p0,
+                  ),
+                  const SizedBox(height: 16),
 
-                // Button to save the profile data.
-                ButtonSetEmployeeData(formKey: _formKey, saveData: saveData)
-              ],
+                  // Button to save the profile data.
+                  ButtonSetEmployeeData(formKey: _formKey, saveData: saveData)
+                ],
+              ),
             ),
           ),
         ),
