@@ -12,17 +12,19 @@ import 'package:el_wedding/features/auth/presentation/views/forget_password_view
 import 'package:el_wedding/features/auth/presentation/views/login_view.dart';
 import 'package:el_wedding/features/auth/presentation/views/register_view.dart';
 import 'package:el_wedding/features/employesViews/data/model/employes_model.dart';
-import 'package:el_wedding/features/employesViews/presentation/views/employee_edit_profile.dart';
+import 'package:el_wedding/features/employesViews/presentation/views/employee_edit_profile_page.dart';
+import 'package:el_wedding/features/employesViews/presentation/views/galary_page.dart';
 import 'package:el_wedding/features/employesViews/presentation/widgets/employe_edit_profile_contant.dart';
 import 'package:el_wedding/features/select_role/presentation/views/select_role_view.dart';
-import 'package:el_wedding/features/employesViews/presentation/views/empolye_profile_first_enter.dart';
+import 'package:el_wedding/features/employesViews/presentation/views/empolye_profile_first_enter_page.dart';
 import 'package:el_wedding/features/userView/presentation/views/user_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-import '../features/employesViews/presentation/views/empolye_profile.dart';
+import '../features/employesViews/presentation/views/empolye_profile_page.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
@@ -80,7 +82,7 @@ class AppRouter {
         },
       ),
       GoRoute(
-        path: '/EmpolyeEditProfile',
+        path: '/EmpolyeProfile',
         builder: (context, state) {
           final employesModel = state.extra as EmployeeModel;
           return EmpolyeProfile(employesModel: employesModel);
@@ -93,7 +95,7 @@ class AppRouter {
         },
       ),
       GoRoute(
-        path: '/EmployeEditProfileBody',
+        path: '/EmployeEditProfileContant',
         builder: (context, state) {
           final employesModel = state.extra as EmployeeModel;
           return EmployeEditProfileContant(
@@ -110,11 +112,41 @@ class AppRouter {
           );
         },
       ),
+
       GoRoute(
         path: '/EmployeeEditProfile',
-        builder: (context, state) {
+        pageBuilder: (context, state) {
           final employeeModel = state.extra as EmployeeModel;
-          return EmployeeEditProfile(employeeModel: employeeModel);
+
+          return CustomTransitionPage(
+            child: EmployeeEditProfile(employeeModel: employeeModel),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              // Fade transition
+              return FadeTransition(
+                opacity: animation,
+                child: child,
+              );
+            },
+          );
+        },
+      ),
+      GoRoute(
+        path: '/GalaryPage',
+        pageBuilder: (context, state) {
+          final images = state.extra as List<String>;
+
+          return CustomTransitionPage(
+            child: GalaryPage(images: images),
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+              // Fade transition
+              return FadeTransition(
+                opacity: animation,
+                child: child,
+              );
+            },
+          );
         },
       ),
     ],

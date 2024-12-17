@@ -238,7 +238,7 @@ class EmployeEditProfileContant extends StatelessWidget {
                                   ),
                                   const Spacer(),
                                   Text(
-                                    "${price.toString()} E.L",
+                                    "${price.toString()} L.E",
                                     style: const TextStyle(
                                       fontSize: 20,
                                     ),
@@ -266,11 +266,28 @@ class EmployeEditProfileContant extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Padding(
-                      padding: EdgeInsets.only(left: 15),
-                      child: Text("Galary",
-                          style: TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold)),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 15),
+                      child: Row(
+                        children: [
+                          const Text("Galary",
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold)),
+                          const Spacer(),
+                          employesModel.imageUrls.length > 5
+                              ? TextButton(
+                                  onPressed: () {
+                                    context.push("/GalaryPage",
+                                        extra: employesModel.imageUrls);
+                                  },
+                                  child: const Text(
+                                    "show more...",
+                                    style: TextStyle(
+                                        color: Colors.black, fontSize: 15),
+                                  ))
+                              : const Placeholder()
+                        ],
+                      ),
                     ),
                     GridView.builder(
                       shrinkWrap: true,
@@ -281,7 +298,9 @@ class EmployeEditProfileContant extends StatelessWidget {
                         crossAxisSpacing: 8,
                         mainAxisSpacing: 8,
                       ),
-                      itemCount: employesModel.imageUrls.length,
+                      itemCount: employesModel.imageUrls.length > 5
+                          ? 6
+                          : employesModel.imageUrls.length,
                       itemBuilder: (context, index) {
                         String imagePath = employesModel.imageUrls[index];
                         return Padding(

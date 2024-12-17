@@ -1,7 +1,7 @@
 import 'package:el_wedding/features/employesViews/data/model/employes_model.dart';
 import 'package:el_wedding/features/employesViews/presentation/widgets/edit_image_profile.dart';
 import 'package:el_wedding/features/employesViews/presentation/widgets/input_field_edit.dart';
-import 'package:el_wedding/features/employesViews/presentation/widgets/muilt_pick_pic.dart';
+import 'package:el_wedding/features/employesViews/presentation/widgets/multi_image_edit.dart';
 import 'package:el_wedding/features/employesViews/presentation/widgets/services_input.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -69,17 +69,14 @@ class _EmployeeEditProfileState extends State<EmployeeEditProfile> {
                     const SizedBox(
                       height: 10,
                     ),
-                    MultiImagePickerWidget(
-                      initialSelectedImages: widget.employeeModel.imageUrls
-                          .map((path) => XFile(path))
-                          .toList(), // تحويل List<String> إلى List<XFile>
-                      onImagePicked: (pickedImages) {
-                        setState(() {
-                          widget.employeeModel.imageUrls
-                              .addAll(pickedImages!.map((image) => image));
-                        });
-                      },
-                    )
+
+                    MultiImageEdit(
+                        initialImages: widget.employeeModel.imageUrls
+                            .map((path) => XFile(path))
+                            .toList(),
+                        onImagePicked: (updateImge) => setState(() {
+                              widget.employeeModel.imageUrls = updateImge;
+                            }))
                   ],
                 )),
           ),

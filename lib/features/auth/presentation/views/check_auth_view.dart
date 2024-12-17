@@ -27,7 +27,7 @@ class CheckAuthView extends StatelessWidget {
           context.go("/EmpolyeProfileFirstEnter", extra: state.username);
         }
         if (state is ProfileComplete) {
-          context.go("/EmpolyeEditProfile", extra: state.employeeModel);
+          context.go("/EmpolyeProfile", extra: state.employeeModel);
         }
       },
       builder: (context, state) {

@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:el_wedding/core/scaffold_message.dart';
 import 'package:el_wedding/features/employesViews/presentation/widgets/button_set_employe_data.dart';
-import 'package:el_wedding/features/employesViews/presentation/widgets/muilt_pick_pic.dart';
+import 'package:el_wedding/features/employesViews/presentation/widgets/multi_image_edit.dart';
 import 'package:el_wedding/features/employesViews/presentation/widgets/pick_image_in_empolye_view.dart';
 import 'package:el_wedding/features/employesViews/presentation/widgets/text_feilds_in_empolyes_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -128,7 +128,7 @@ class _EmpolyeProfileFirstEnter extends State<EmpolyeProfileFirstEnter> {
                   // Adding space.
                   const SizedBox(height: 16),
                   // Widget to select multiple images.
-                  MultiImagePickerWidget(
+                  MultiImageEdit(
                     onImagePicked: (p0) => _selectedImages = p0,
                   ),
                   const SizedBox(height: 16),

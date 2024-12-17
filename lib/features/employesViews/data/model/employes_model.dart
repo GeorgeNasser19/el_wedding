@@ -10,7 +10,7 @@ class EmployeeModel {
   final String description;
   final List<Map<String, dynamic>> services;
   final List<String>? images; // الصور الإضافية
-  final List<String> imageUrls; // روابط الصور
+  List<String> imageUrls; // روابط الصور
 
   EmployeeModel({
     required this.imageUrls,
