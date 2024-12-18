@@ -61,7 +61,7 @@ class CheckAuthCubit extends Cubit<CheckAuthState> {
         (employeeDate) => employeeModel = employeeDate);
 
     if (userModel!.role == "user") {
-      emit(UserLoaded(userModel!));
+      emit(UserLoaded(userModel!, employeeModel!));
       return;
     }
     if (userModel!.role == "user" && userModel!.isProfileComplete == false) {

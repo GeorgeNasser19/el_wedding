@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:photo_view/photo_view.dart';
 
 class GalaryPage extends StatelessWidget {
   const GalaryPage({super.key, required this.images});
@@ -44,7 +45,36 @@ class GalaryPage extends StatelessWidget {
                 return Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: GestureDetector(
-                    onTap: () {},
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        barrierDismissible:
+                            true, // يسمح بالإغلاق عند النقر خارج الصورة
+                        builder: (context) {
+                          return GestureDetector(
+                            onVerticalDragUpdate: (details) {
+                              if (details.primaryDelta! > 10) {
+                                Navigator.pop(context); // يغلق عند السحب لأسفل
+                              }
+                            },
+                            child: Dialog(
+                              backgroundColor: Colors.transparent,
+                              insetPadding:
+                                  EdgeInsets.zero, // استخدام كامل الشاشة
+                              child: PhotoView(
+                                enableRotation: true,
+                                imageProvider: NetworkImage(imagePath),
+                                minScale: PhotoViewComputedScale.contained,
+                                maxScale: PhotoViewComputedScale.covered * 2,
+                                backgroundDecoration: const BoxDecoration(
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
                     child: CachedNetworkImage(
                       imageUrl: imagePath,
                       width: 300,

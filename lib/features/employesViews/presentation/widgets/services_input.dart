@@ -48,7 +48,7 @@ class ServicesInputWidget extends StatelessWidget {
       {super.key, required this.services, required this.onChange});
 
   final List<Map<String, dynamic>> services;
-  final VoidCallback onChange;
+  final Function(List<Map<String, dynamic>>) onChange;
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +74,7 @@ class ServicesInputWidget extends StatelessWidget {
                 itemCount: services.length, // Number of services.
                 itemBuilder: (context, index) {
                   return buildServiceInput(index, services, () {
-                    onChange();
+                    onChange(List.from(services));
                   });
                 },
               ),
@@ -86,7 +86,7 @@ class ServicesInputWidget extends StatelessWidget {
                 child: ButtonAddServices(
                   services: services,
                   onChange: () {
-                    onChange();
+                    onChange(List.from(services));
                   },
                 ),
               ),

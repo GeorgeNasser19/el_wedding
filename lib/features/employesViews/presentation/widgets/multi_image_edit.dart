@@ -1,7 +1,9 @@
 import 'dart:developer';
 import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:el_wedding/features/employesViews/presentation/widgets/show_pic.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 class MultiImageEdit extends StatefulWidget {
@@ -49,7 +51,7 @@ class _MultiImageEditState extends State<MultiImageEdit> {
       // ignore: use_build_context_synchronously
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('حدث خطأ أثناء اختيار الصور: $e'),
+          content: Text('error in pick image : $e'),
         ),
       );
     }
@@ -88,12 +90,15 @@ class _MultiImageEditState extends State<MultiImageEdit> {
                 ),
               ),
               const Spacer(),
-              _images.length > 5
+              _images.length > 6
                   ? TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        context.push("/GalaryPage",
+                            extra: _images.map((file) => file.path).toList());
+                      },
                       child: const Text("show more...",
                           style: TextStyle(color: Colors.black, fontSize: 15)))
-                  : const Placeholder()
+                  : const Text("")
             ],
           ),
           const SizedBox(height: 5),
@@ -109,47 +114,53 @@ class _MultiImageEditState extends State<MultiImageEdit> {
                   itemCount: _images.length > 5 ? 6 : _images.length,
                   itemBuilder: (context, index) {
                     final imagePath = _images[index];
-                    return Stack(
-                      children: [
-                        Positioned.fill(
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(10),
-                            child: _isNetworkImage(imagePath.path)
-                                ? CachedNetworkImage(
-                                    imageUrl: imagePath.path,
-                                    fit: BoxFit.cover,
-                                    placeholder: (context, url) => const Center(
-                                      child: CircularProgressIndicator(),
+                    return GestureDetector(
+                      onTap: () {
+                        showPicDialog(context, imagePath.path);
+                      },
+                      child: Stack(
+                        children: [
+                          Positioned.fill(
+                            child: ClipRRect(
+                              borderRadius: BorderRadius.circular(10),
+                              child: _isNetworkImage(imagePath.path)
+                                  ? CachedNetworkImage(
+                                      imageUrl: imagePath.path,
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) =>
+                                          const Center(
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(Icons.error),
+                                    )
+                                  : Image.file(
+                                      File(imagePath.path),
+                                      fit: BoxFit.cover,
                                     ),
-                                    errorWidget: (context, url, error) =>
-                                        const Icon(Icons.error),
-                                  )
-                                : Image.file(
-                                    File(imagePath.path),
-                                    fit: BoxFit.cover,
-                                  ),
+                            ),
                           ),
-                        ),
-                        Positioned(
-                          top: 5,
-                          right: 5,
-                          child: GestureDetector(
-                            onTap: () => _removeImage(index),
-                            child: Container(
-                              decoration: const BoxDecoration(
-                                color: Colors.red,
-                                shape: BoxShape.circle,
-                              ),
-                              padding: const EdgeInsets.all(4),
-                              child: const Icon(
-                                Icons.close,
-                                color: Colors.white,
-                                size: 16,
+                          Positioned(
+                            top: 5,
+                            right: 5,
+                            child: GestureDetector(
+                              onTap: () => _removeImage(index),
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  color: Colors.red,
+                                  shape: BoxShape.circle,
+                                ),
+                                padding: const EdgeInsets.all(4),
+                                child: const Icon(
+                                  Icons.close,
+                                  color: Colors.white,
+                                  size: 16,
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     );
                   },
                 ),

@@ -1,5 +1,5 @@
 import 'package:el_wedding/features/employesViews/data/model/employes_model.dart';
-import 'package:el_wedding/features/employesViews/presentation/widgets/employe_edit_profile_contant.dart';
+import 'package:el_wedding/features/employesViews/presentation/widgets/employe_profile_contant.dart';
 import 'package:el_wedding/features/userView/presentation/views/text.dart';
 import 'package:flutter/material.dart';
 

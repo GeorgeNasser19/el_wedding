@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:el_wedding/features/employesViews/data/model/employes_model.dart';
+import 'package:el_wedding/features/employesViews/presentation/widgets/show_pic.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -274,7 +275,7 @@ class EmployeEditProfileContant extends StatelessWidget {
                               style: TextStyle(
                                   fontSize: 20, fontWeight: FontWeight.bold)),
                           const Spacer(),
-                          employesModel.imageUrls.length > 5
+                          employesModel.imageUrls.length > 6
                               ? TextButton(
                                   onPressed: () {
                                     context.push("/GalaryPage",
@@ -285,7 +286,7 @@ class EmployeEditProfileContant extends StatelessWidget {
                                     style: TextStyle(
                                         color: Colors.black, fontSize: 15),
                                   ))
-                              : const Placeholder()
+                              : const Text("")
                         ],
                       ),
                     ),
@@ -303,13 +304,18 @@ class EmployeEditProfileContant extends StatelessWidget {
                           : employesModel.imageUrls.length,
                       itemBuilder: (context, index) {
                         String imagePath = employesModel.imageUrls[index];
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: CachedNetworkImage(
-                            imageUrl: imagePath,
-                            width: 300,
-                            height: 300,
-                            fit: BoxFit.cover,
+                        return GestureDetector(
+                          onTap: () {
+                            showPicDialog(context, imagePath);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: CachedNetworkImage(
+                              imageUrl: imagePath,
+                              width: 300,
+                              height: 300,
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         );
                       },

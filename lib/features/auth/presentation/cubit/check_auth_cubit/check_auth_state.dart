@@ -32,8 +32,9 @@ final class ProfileComplete extends CheckAuthState {
 
 final class UserLoaded extends CheckAuthState {
   final UserModel userModel;
+  final EmployeeModel employeeModel;
 
-  const UserLoaded(this.userModel);
+  const UserLoaded(this.userModel, this.employeeModel);
   @override
-  List<Object> get props => [userModel];
+  List<Object> get props => [userModel, employeeModel];
 }

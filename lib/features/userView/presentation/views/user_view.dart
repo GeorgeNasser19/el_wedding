@@ -3,6 +3,7 @@ import 'package:el_wedding/features/auth/data/auth_repo_imp.dart';
 import 'package:el_wedding/features/auth/data/model/user_model.dart';
 import 'package:el_wedding/features/auth/domin/usecase/auth_repo_usecase.dart';
 import 'package:el_wedding/features/auth/presentation/cubit/auth_cubit/auth_cubit.dart';
+import 'package:el_wedding/features/employesViews/data/model/employes_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -12,9 +13,11 @@ import 'package:google_sign_in/google_sign_in.dart';
 import '../../../../core/helpers/sheard_pref.dart';
 
 class UserView extends StatelessWidget {
-  const UserView({super.key, required this.userModel});
+  const UserView(
+      {super.key, required this.userModel, required this.employeeModel});
 
   final UserModel userModel;
+  final EmployeeModel employeeModel;
 
   @override
   Widget build(BuildContext context) {

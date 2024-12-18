@@ -11,11 +11,14 @@ import 'package:el_wedding/features/auth/presentation/views/check_auth_view.dart
 import 'package:el_wedding/features/auth/presentation/views/forget_password_view.dart';
 import 'package:el_wedding/features/auth/presentation/views/login_view.dart';
 import 'package:el_wedding/features/auth/presentation/views/register_view.dart';
+import 'package:el_wedding/features/auth/presentation/views/select_role_view.dart';
+import 'package:el_wedding/features/employesViews/data/employes_repo_imp.dart';
 import 'package:el_wedding/features/employesViews/data/model/employes_model.dart';
+import 'package:el_wedding/features/employesViews/domain/usecase/employ_repo_usecase.dart';
+import 'package:el_wedding/features/employesViews/presentation/employes_cubit/employes_cubit.dart';
 import 'package:el_wedding/features/employesViews/presentation/views/employee_edit_profile_page.dart';
 import 'package:el_wedding/features/employesViews/presentation/views/galary_page.dart';
-import 'package:el_wedding/features/employesViews/presentation/widgets/employe_edit_profile_contant.dart';
-import 'package:el_wedding/features/select_role/presentation/views/select_role_view.dart';
+import 'package:el_wedding/features/employesViews/presentation/widgets/employe_profile_contant.dart';
 import 'package:el_wedding/features/employesViews/presentation/views/empolye_profile_first_enter_page.dart';
 import 'package:el_wedding/features/userView/presentation/views/user_view.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -85,7 +88,12 @@ class AppRouter {
         path: '/EmpolyeProfile',
         builder: (context, state) {
           final employesModel = state.extra as EmployeeModel;
-          return EmpolyeProfile(employesModel: employesModel);
+          return BlocProvider(
+            create: (context) => EmployesCubit(
+                EmployRepoUsecase(EmployesRepoImp()),
+                SharedServicesUsecase(SharedServicesRepoImpl())),
+            child: EmpolyeProfile(employesModel: employesModel),
+          );
         },
       ),
       GoRoute(
@@ -106,9 +114,14 @@ class AppRouter {
       GoRoute(
         path: '/UserView',
         builder: (context, state) {
-          final userModel = state.extra as UserModel;
+          // تمرير البيانات كـ Map
+          final args = state.extra as Map<String, dynamic>;
+          final userModel = args['userModel'] as UserModel;
+          final employeeModel = args['employeeModel'] as EmployeeModel;
+
           return UserView(
             userModel: userModel,
+            employeeModel: employeeModel,
           );
         },
       ),

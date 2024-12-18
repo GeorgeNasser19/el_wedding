@@ -120,7 +120,7 @@ class _EmpolyeProfileFirstEnter extends State<EmpolyeProfileFirstEnter> {
                   // Displaying a list of service inputs dynamically.
                   ServicesInputWidget(
                     services: services,
-                    onChange: () {
+                    onChange: (_) {
                       setState(() {});
                     },
                   ),

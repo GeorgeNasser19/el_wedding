@@ -4,8 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:el_wedding/features/employesViews/data/model/employes_model.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/material.dart';
-import 'package:image_cropper/image_cropper.dart';
+
 import 'package:image_picker/image_picker.dart';
 
 import '../domain/employes_repo.dart';
@@ -35,21 +34,21 @@ class EmployesRepoImp extends EmployesRepo {
     }
   }
 
-  Future<File?> cropImage(File image) async {
-    final croppedImage =
-        await ImageCropper().cropImage(sourcePath: image.path, uiSettings: [
-      AndroidUiSettings(
-          toolbarTitle: "crop",
-          toolbarColor: Colors.blue,
-          toolbarWidgetColor: Colors.white,
-          hideBottomControls: true,
-          lockAspectRatio: true)
-    ]);
-    if (croppedImage != null) {
-      return File(croppedImage.path);
-    }
-    return null;
-  }
+  // Future<File?> cropImage(File image) async {
+  //   final croppedImage =
+  //       await ImageCropper().cropImage(sourcePath: image.path, uiSettings: [
+  //     AndroidUiSettings(
+  //         toolbarTitle: "crop",
+  //         toolbarColor: Colors.blue,
+  //         toolbarWidgetColor: Colors.white,
+  //         hideBottomControls: true,
+  //         lockAspectRatio: true)
+  //   ]);
+  //   if (croppedImage != null) {
+  //     return File(croppedImage.path);
+  //   }
+  //   return null;
+  // }
 
   // Function to upload employee data along with their images to Firestore and Firebase Storage
   @override
