@@ -1,28 +1,25 @@
-import 'package:el_wedding/core/scaffold_message.dart';
-import 'package:el_wedding/features/employesViews/presentation/employes_cubit/employes_cubit.dart';
+import 'package:el_wedding/features/userView/presentation/cubit/user_view_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-class ButtonSetEmployeeData extends StatelessWidget {
+import '../../../../core/scaffold_message.dart';
+
+class ButtonSetDate extends StatelessWidget {
+  const ButtonSetDate(
+      {super.key, required this.formKey, required this.saveData});
   final GlobalKey<FormState> formKey;
   final VoidCallback saveData;
-
-  const ButtonSetEmployeeData({
-    super.key,
-    required this.formKey,
-    required this.saveData,
-  });
-
   @override
   Widget build(BuildContext context) {
-    return BlocConsumer<EmployesCubit, EmployesState>(
+    return BlocConsumer<UserViewCubit, UserViewState>(
       listener: (context, state) {
-        if (state is SaveDataFailur) {
-          ScaffoldMessageApp.snakeBar(context, state.errorMessage);
-        } else if (state is SaveDataLoaded) {
-          ScaffoldMessageApp.snakeBar(context, "Success!");
-          context.go("/EmployeEditProfileContant", extra: state.employesModel);
+        if (state is SetDateFauiler) {
+          ScaffoldMessageApp.snakeBar(context, state.message);
+        }
+        if (state is SetDateLoaded) {
+          ScaffoldMessageApp.snakeBar(context, 'Date set successfully');
+          context.go("/UserView", extra: state.userModel);
         }
       },
       builder: (context, state) {
@@ -43,7 +40,7 @@ class ButtonSetEmployeeData extends StatelessWidget {
                     saveData();
                   }
                 },
-                child: state is SaveDataLoading
+                child: state is SetDateLoading
                     ? const Center(child: CircularProgressIndicator())
                     : const Text('Save', style: TextStyle(color: Colors.black)),
               ),

@@ -49,20 +49,22 @@ final class PickedIamgeFailur extends EmployesState {
   List<Object> get props => [errorMessage];
 }
 
-final class EmployeeModelLoading extends EmployesState {}
+final class EmployeeModeloading extends EmployesState {}
 
 final class EmployeeModelLoaded extends EmployesState {
-  final EmployeeModel employeeModel;
+  final EmployeeModel employesModel;
 
-  const EmployeeModelLoaded(this.employeeModel);
+  const EmployeeModelLoaded(this.employesModel);
 
   @override
-  List<Object> get props => [employeeModel];
+  List<Object> get props => [employesModel];
 }
 
 final class EmployeeModelFailur extends EmployesState {
   final String errorMessage;
+
   const EmployeeModelFailur(this.errorMessage);
+
   @override
   List<Object> get props => [errorMessage];
 }

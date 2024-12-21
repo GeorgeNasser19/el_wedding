@@ -3,9 +3,10 @@ import 'dart:developer';
 // ignore: depend_on_referenced_packages
 import 'package:bloc/bloc.dart';
 import 'package:el_wedding/core/shared_services/shared_service_usecase/shared_services_usecase.dart';
-import 'package:el_wedding/features/auth/data/model/user_model.dart';
+import 'package:el_wedding/features/auth/data/model/auth_model.dart';
 import 'package:el_wedding/features/auth/domin/usecase/auth_repo_usecase.dart';
 import 'package:el_wedding/features/employesViews/data/model/employes_model.dart';
+import 'package:el_wedding/features/userView/data/model/user_model.dart';
 import 'package:equatable/equatable.dart';
 
 part 'check_auth_state.dart';
@@ -44,13 +45,15 @@ class CheckAuthCubit extends Cubit<CheckAuthState> {
       return;
     }
 
-    final userModelMap = await sharedServicesUsecase.fetchUserModel(user.uid);
-    UserModel? userModel;
-    userModelMap.fold(
-        (left) => "failed to fetch user", (userDate) => userModel = userDate);
+    final authModelMap = await sharedServicesUsecase.fetchAuthModel(user.uid);
+    AuthModel? authModel;
+    authModelMap.fold(
+        (left) => "failed to fetch user", (authDate) => authModel = authDate);
 
-    if (isRoleSelected == true && userModel!.isProfileComplete == false) {
-      emit(NoProfileComolete(userModel!.name));
+    if (isRoleSelected == true && authModel!.role == 'makeupArtist' ||
+        authModel!.role == 'photographer' &&
+            authModel!.isProfileComplete == false) {
+      emit(NoProfileComolete(authModel!.name));
       return;
     }
 
@@ -60,16 +63,24 @@ class CheckAuthCubit extends Cubit<CheckAuthState> {
     employeeModelMap.fold((fail) => "failed to fetch employee",
         (employeeDate) => employeeModel = employeeDate);
 
-    if (userModel!.role == "user") {
-      emit(UserLoaded(userModel!, employeeModel!));
+    final userModelMap = await sharedServicesUsecase.fetchUserModel(user.uid);
+    UserModel? userModel;
+    userModelMap.fold((fail) => "failed to fetch employee",
+        (userDate) => userModel = userDate);
+
+    if (authModel!.role == "user" && authModel!.isProfileComplete == true) {
+      emit(UserLoaded(userModel!));
       return;
     }
-    if (userModel!.role == "user" && userModel!.isProfileComplete == false) {
-      // TODO :
+    if (isRoleSelected == true &&
+        authModel!.role == "user" &&
+        authModel!.isProfileComplete == false) {
+      emit(UserFirstEnter(authModel!.name));
+      return;
     }
-    if (userModel!.role == 'makeupArtist' ||
-        userModel!.role == 'photographer' &&
-            userModel!.isProfileComplete == true) {
+    if (authModel!.role == 'makeupArtist' ||
+        authModel!.role == 'photographer' &&
+            authModel!.isProfileComplete == true) {
       emit(ProfileComplete(employeeModel!));
       return;
     }

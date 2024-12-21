@@ -102,8 +102,8 @@ class _EmpolyeProfileFirstEnter extends State<EmpolyeProfileFirstEnter> {
                 children: [
                   // Widget for selecting an image.
                   PickImageInEmployeeView(
-                    onImagePicked: (image3) {
-                      image = image3; // Updating the selected image.
+                    onImagePicked: (selectImage) {
+                      image = selectImage; // Updating the selected image.
                     },
                   ),
                   const SizedBox(height: 15),

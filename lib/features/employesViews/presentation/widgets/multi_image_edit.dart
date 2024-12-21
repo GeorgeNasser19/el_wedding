@@ -105,6 +105,7 @@ class _MultiImageEditState extends State<MultiImageEdit> {
           _images.isEmpty
               ? const Text('No images selected yet.')
               : GridView.builder(
+                  physics: const NeverScrollableScrollPhysics(),
                   shrinkWrap: true,
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                     crossAxisCount: 3,
@@ -125,6 +126,8 @@ class _MultiImageEditState extends State<MultiImageEdit> {
                               borderRadius: BorderRadius.circular(10),
                               child: _isNetworkImage(imagePath.path)
                                   ? CachedNetworkImage(
+                                      fadeInDuration:
+                                          const Duration(milliseconds: 500),
                                       imageUrl: imagePath.path,
                                       fit: BoxFit.cover,
                                       placeholder: (context, url) =>

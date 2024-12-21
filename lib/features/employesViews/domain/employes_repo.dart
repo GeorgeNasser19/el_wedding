@@ -8,4 +8,9 @@ abstract class EmployesRepo {
   Future<Either<String, File>> pickImage(File? image);
   Future<Either<String, EmployeeModel>> setEmployeData(
       EmployeeModel emplyesModel);
+
+  Future<Either<String, EmployeeModel>> updateEmployeData(
+    EmployeeModel emplyesModel, {
+    List<String>? oldImageUrls, // الصور القديمة من Firestore
+  });
 }

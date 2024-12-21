@@ -7,8 +7,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../auth/presentation/cubit/auth_cubit/auth_cubit.dart';
 
-class EmployeEditProfileContant extends StatelessWidget {
-  const EmployeEditProfileContant({super.key, required this.employesModel});
+class EmployeProfileContantPage extends StatelessWidget {
+  const EmployeProfileContantPage({super.key, required this.employesModel});
 
   final EmployeeModel employesModel;
 
@@ -94,17 +94,22 @@ class EmployeEditProfileContant extends StatelessWidget {
                 ),
                 child: Row(
                   children: [
-                    ClipOval(
-                      child: CachedNetworkImage(
-                        fadeInDuration: const Duration(milliseconds: 500),
-                        fit: BoxFit.cover,
-                        width: 100,
-                        height: 100,
-                        errorWidget: (context, url, error) =>
-                            const Icon(Icons.error),
-                        placeholder: (context, url) =>
-                            const CircularProgressIndicator(),
-                        imageUrl: employesModel.imageUrl,
+                    GestureDetector(
+                      onTap: () {
+                        showPicDialog(context, employesModel.imageUrl);
+                      },
+                      child: ClipOval(
+                        child: CachedNetworkImage(
+                          fadeInDuration: const Duration(milliseconds: 500),
+                          fit: BoxFit.cover,
+                          width: 100,
+                          height: 100,
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.error),
+                          placeholder: (context, url) =>
+                              const CircularProgressIndicator(),
+                          imageUrl: employesModel.imageUrl,
+                        ),
                       ),
                     ),
                     const SizedBox(

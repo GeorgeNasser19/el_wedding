@@ -1,3 +1,5 @@
+import 'dart:io';
+
 enum UserRole { user, photographer, makeupArtist }
 
 UserRole? getUserRole(String role) {
@@ -13,15 +15,18 @@ UserRole? getUserRole(String role) {
   }
 }
 
-class UserModel {
+class AuthModel {
   final String id;
   final String name;
   final String email;
   final String? role;
   final bool isProfileComplete;
   final bool isSeletectRole;
+  String? imageUrl;
+  File? image;
+  String? fName;
 
-  UserModel(
+  AuthModel(
       {required this.id,
       required this.name,
       required this.email,
@@ -29,8 +34,8 @@ class UserModel {
       this.isSeletectRole = false,
       this.isProfileComplete = false});
 
-  factory UserModel.fromDoc(Map<String, dynamic> doc) {
-    return UserModel(
+  factory AuthModel.fromDoc(Map<String, dynamic> doc) {
+    return AuthModel(
       id: doc['id'] ?? "",
       name: doc['name'] ?? "",
       email: doc['email'] ?? "",

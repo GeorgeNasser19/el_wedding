@@ -29,6 +29,9 @@ class CheckAuthView extends StatelessWidget {
         if (state is ProfileComplete) {
           context.go("/EmpolyeProfile", extra: state.employeeModel);
         }
+        if (state is UserFirstEnter) {
+          context.go("/UserEnterProfile", extra: state.username);
+        }
       },
       builder: (context, state) {
         return const Scaffold(

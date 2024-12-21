@@ -55,9 +55,6 @@ class _EmployeeEditProfileState extends State<EmployeeEditProfile> {
   void saveData() {
     // Getting the current user's ID from Firebase Authentication.
     String userId = FirebaseAuth.instance.currentUser!.uid;
-
-    log(widget.employeeModel.imageUrl.toString());
-
     // Checking if an image is selected before saving the data.
     if (image == null) {
       // Show a message if no image is selected.
@@ -68,7 +65,8 @@ class _EmployeeEditProfileState extends State<EmployeeEditProfile> {
       ScaffoldMessageApp.snakeBar(context, "No Images Selected");
     } else {
       // Saving the data using the EmployesCubit.
-      context.read<EmployesCubit>().saveData(EmployeeModel(
+      context.read<EmployesCubit>().updateEmployeData(
+          EmployeeModel(
             image: image!,
             description: description.text,
             fName: fname.text,
@@ -79,7 +77,11 @@ class _EmployeeEditProfileState extends State<EmployeeEditProfile> {
             images: _selectedImages!,
             imageUrls: _selectedImages!,
             imageUrl: image!.path,
-          ));
+          ),
+          oldImageUrls: widget.employeeModel.imageUrls);
+      log("el soraa${image.toString()}");
+      log(" el galary${_selectedImages.toString()}");
+      log("services ${services.toString()}");
     }
   }
 
@@ -105,7 +107,16 @@ class _EmployeeEditProfileState extends State<EmployeeEditProfile> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // pick image
-                      EditImageProfile(image: image!.path),
+                      EditImageProfile(
+                        image: widget.employeeModel.imageUrl,
+                        onImagePicked: (File? selectedImage) {
+                          if (selectedImage != null) {
+                            image = selectedImage;
+                          } else {
+                            image = widget.employeeModel.image;
+                          }
+                        },
+                      ),
                       const SizedBox(
                         height: 10,
                       ),
@@ -150,7 +161,3 @@ class _EmployeeEditProfileState extends State<EmployeeEditProfile> {
     );
   }
 }
-// context
-//.read<EmployesCubit>()
-//.pickIamge(File(widget
-//.employeeModel.imageUrl));

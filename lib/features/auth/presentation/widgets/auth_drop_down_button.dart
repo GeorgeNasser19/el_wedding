@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:el_wedding/features/auth/data/model/user_model.dart';
+import 'package:el_wedding/features/auth/data/model/auth_model.dart';
 
 class RoleDropdown extends StatelessWidget {
   final UserRole? selectedRole; // Using UserRole enum directly

@@ -1,5 +1,5 @@
 import 'package:el_wedding/features/employesViews/data/model/employes_model.dart';
-import 'package:el_wedding/features/employesViews/presentation/widgets/employe_profile_contant.dart';
+import 'package:el_wedding/features/employesViews/presentation/views/employe_profile_contant_page.dart';
 import 'package:el_wedding/features/userView/presentation/views/text.dart';
 import 'package:flutter/material.dart';
 
@@ -17,7 +17,7 @@ class _EmpolyeProfileState extends State<EmpolyeProfile> {
   @override
   Widget build(BuildContext context) {
     final List<Widget> pages = <Widget>[
-      EmployeEditProfileContant(employesModel: widget.employesModel),
+      EmployeProfileContantPage(employesModel: widget.employesModel),
       const TestPage()
     ];
     return SafeArea(

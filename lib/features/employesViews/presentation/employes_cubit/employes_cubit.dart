@@ -50,4 +50,17 @@ class EmployesCubit extends Cubit<EmployesState> {
     result.fold((fail) => emit(SaveDataFailur(fail)),
         (emplyesModel) => emit(SaveDataLoaded(emplyesModel)));
   }
+
+  Future<void> updateEmployeData(
+    EmployeeModel emplyesModel, {
+    List<String>? oldImageUrls, // الصور القديمة من Firestore
+  }) async {
+    emit(SaveDataLoading());
+
+    final result = await employRepoUsecase.updateEmployeData(emplyesModel,
+        oldImageUrls: oldImageUrls);
+
+    result.fold((fail) => emit(SaveDataFailur(fail)),
+        (emplyesModel) => emit(SaveDataLoaded(emplyesModel)));
+  }
 }

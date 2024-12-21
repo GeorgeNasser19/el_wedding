@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/scaffold_message.dart';
 import '../../../../core/theme.dart';
-import '../../../auth/data/model/user_model.dart';
+import '../../data/model/auth_model.dart';
 
 class SelectRoleView extends StatefulWidget {
   const SelectRoleView({super.key});

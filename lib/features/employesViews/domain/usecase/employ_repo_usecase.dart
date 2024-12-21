@@ -18,4 +18,12 @@ class EmployRepoUsecase {
   Future<Either<String, File>> pickImgae(File? image) async {
     return await employesRepo.pickImage(image);
   }
+
+  Future<Either<String, EmployeeModel>> updateEmployeData(
+    EmployeeModel emplyesModel, {
+    List<String>? oldImageUrls, // الصور القديمة من Firestore
+  }) async {
+    return await employesRepo.updateEmployeData(emplyesModel,
+        oldImageUrls: oldImageUrls);
+  }
 }
